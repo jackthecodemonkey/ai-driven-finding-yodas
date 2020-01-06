@@ -1,0 +1,138 @@
+.simulator {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.gridWrapper {
+  width: 505px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.robot {
+  position: absolute;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.input-group {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.input-group .label {
+    border: 1px solid #989898;
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.input-group .input-wrapper {
+  border: 1px solid #989898;
+  padding: 10px;
+  border-left: none;
+}
+
+.set-position {
+  padding: 20px;
+  border-radius: 5px;
+  outline: none;
+  background: content-box;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
+.input-group .input-wrapper input[type="text"] {
+  outline: none;
+  border: none;
+}
+
+.tooltip .__react_component_tooltip.place-bottom{
+  margin-top: 31px !important;
+  }
+  .tooltip .__react_component_tooltip.type-dark{
+  background-color: #e6bd32;
+  }
+  .tooltip .__react_component_tooltip.type-dark.place-top:after {
+      border-top-color: #d2ac2d;
+      border-top-style: solid;
+      border-top-width: 6px;
+  }
+
+.robot-controller {
+  width: 505px;
+  display: flex;
+  margin: 0 auto;
+}
+
+.robot-controller .wrapper {
+  width: 100%;
+  display: flex;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.robot-controller .wrapper .status {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+}
+
+.robot-controller .wrapper .setRobot {
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.block {
+  width: 100px;
+  height: 100px;
+  background: lightsalmon;
+}
+
+.block:hover {
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
