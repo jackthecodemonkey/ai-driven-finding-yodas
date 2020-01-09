@@ -10,10 +10,10 @@ function App() {
     <div className="simulator">
       <Board
         event={event}
-        gridX={10}
-        gridY={10}
-        gridWidth={50}
-        gridHeight={50}
+        gridX={5}
+        gridY={5}
+        gridWidth={100}
+        gridHeight={100}
       >
         <Robot
           event={event}

@@ -25,8 +25,8 @@ class Robot extends React.Component {
         this.props.event.on(EventTypes.RobotDemension, (width, height) => {
             this.setState({ width, height })
         })
-        this.props.event.on(EventTypes.MoveRobot, (robotMover) => {
-            this.MoveTo(robotMover.GetCurrentPosition(this.state.width, this.state.height));
+        this.props.event.on(EventTypes.MoveRobot, (robotMover, done) => {
+            this.MoveTo(robotMover.GetCurrentPosition(this.state.width, this.state.height), done);
             ReactTooltip.hide(this.invalidKey)
             ReactTooltip.hide(this.wrongDirectionRef)
         })
@@ -44,7 +44,7 @@ class Robot extends React.Component {
         })
     }
 
-    MoveTo(moveTo) {
+    MoveTo(moveTo, done) {
         const { x, y } = this.state;
         this.setState({
             x: moveTo.left,
@@ -56,6 +56,10 @@ class Robot extends React.Component {
             } else {
                 this.robotRef.current.style.transform = `translateX(${moveTo.left}px) translateY(${moveTo.top}px)`;
             }
+
+            setTimeout(()=>{
+                done && done();
+            },300);
         })
     }
 

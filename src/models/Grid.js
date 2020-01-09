@@ -1,7 +1,115 @@
 import Cell from './Cell';
 
-class Grid {
+const Algorithms = Object.freeze({
+    DFS: 'DFS',
+    BFS: 'BFS',
+    ASTAR: 'ASTAR',
+})
+
+class PathAlgo {
+    constructor() {
+        this.nodes = null;
+        this.currentNode = null;
+        this.stack = [];
+    }
+
+    InitializeNodes() {
+        this.nodes = this.GetNewNodesFromCurrentCells();
+    }
+
+    RestructPath() {
+        let current = this.currentNode;
+        let paths = [];
+        while (current !== null) {
+            paths.unshift({ i: current.i, j: current.j });
+            current = current.parentNode;
+        }
+        return paths;
+    }
+
+    FindShortestPath({ x: fromY, y: fromX }, { x: toY, y: toX }, algoType = Algorithms.DFS) {
+        this.InitializeNodes();
+        // 1. use a path algo 
+        // 2. find shortest direction and path to the gaol position
+        // 3. return the array
+        const currentNodeIndex = this.GetCellIndex(fromX, fromY);
+        const currentNode = this.nodes[currentNodeIndex];
+
+        currentNode.visited = true;
+        this.stack.push(currentNode);
+
+        // console.log('toY' ,toY)
+        // console.log('toX ', toX)
+
+        while (this.stack.length) {
+            this.currentNode = this.stack.pop();
+            if (this.currentNode.i === toX && this.currentNode.j === toY) {
+                break;
+            }
+            // console.log('this.currentNode')
+            // console.log(this.currentNode);
+            const allNeigbors = this.GetAllNeigbors(this.currentNode, this.nodes);
+
+            // console.log('this.nodes')
+            // console.log(this.nodes);
+
+            // console.log('allNeigbors')
+            // console.log(allNeigbors);
+            const possibleIndexes = this.GetIndexOfMovablePath(this.currentNode.i, this.currentNode.j, this.currentNode.walls)
+            const filteredNeighbors = this.GetFilteredNeigbors(allNeigbors, possibleIndexes);
+            // console.log('filteredNeighbors')
+            // console.log(filteredNeighbors);
+            if (filteredNeighbors.length) {
+                this.stack.push(this.currentNode);
+                const next = this.GetNeigborsOfCurrentCell(filteredNeighbors);
+                const { i: nextI, j: nextJ } = next;
+                const { i: currentI, j: currentJ } = this.currentNode;
+                const [currentNodeWall, nextNodeWall] = this.GetDirection(nextI, nextJ, currentI, currentJ);
+                this.currentNode.walls[currentNodeWall] = false;
+                next.walls[nextNodeWall] = false;
+                next.visited = true;
+                next.parentNode = this.currentNode;
+                this.stack.push(next);
+            }
+        }
+
+        // console.log('this.currentNode')
+        // console.log(this.currentNode);
+        // console.log(this.RestructPath());
+        return this.RestructPath();
+        // initialCell.visited = true;
+        // this.stack.push(initialCell);
+
+
+
+
+        // const initialCell = this.flattenCells[0];
+        // initialCell.visited = true;
+        // this.stack.push(initialCell);
+        // while (this.stack.length) {
+        //     this.currentCell = this.stack.pop();
+        //     const allNeigbors = this.GetAllNeigbors(this.currentCell);
+        //     if (allNeigbors.length) {
+        //         this.stack.push(this.currentCell);
+        //         const next = this.GetNeigborsOfCurrentCell(allNeigbors);
+        //         const { i: nextI, j: nextJ } = next;
+        //         const { i: currentI, j: currentJ } = this.currentCell;
+        //         const [currentNodeWall, nextNodeWall] = this.GetDirection(nextI, nextJ, currentI, currentJ);
+        //         this.currentCell.walls[currentNodeWall] = false;
+        //         next.walls[nextNodeWall] = false;
+        //         next.visited = true;
+        //         this.stack.push(next);
+        //     }
+        // }
+
+        // console.log(filteredNeighbors);
+    }
+}
+
+
+class Grid extends PathAlgo {
     constructor(board = {}) {
+        super();
         this.gridWidth = board.gridWidth || 100;
         this.gridHeight = board.gridHeight || 100;
         this.gridX = board.gridX || 5;
@@ -20,6 +128,10 @@ class Grid {
 
     get GetGridCells() {
         return this.gridCells;
+    }
+
+    GetPathFromTo(from, to) {
+        return this.FindShortestPath(from, to);
     }
 
     GetDirection(nextI, nextJ, currentI, currentJ) {
@@ -50,6 +162,29 @@ class Grid {
         }
     }
 
+    GetFilteredNeigbors(allNeigbors, possibleIndexes) {
+        return allNeigbors.filter(neigbor => {
+            return possibleIndexes.find(index => index.i === neigbor.i && index.j === neigbor.j);
+        })
+    }
+
+    GetIndexOfMovablePath(i, j, walls) {
+        return walls.reduce((acc, next, index) => {
+            if (next === false) {
+                let nextI = i;
+                let nextJ = j;
+                switch (index) {
+                    case 0: nextI = nextI - 1; break;
+                    case 1: nextJ = nextJ + 1; break;
+                    case 2: nextI = nextI + 1; break;
+                    case 3: nextJ = nextJ - 1; break;
+                }
+                acc.push({ i: nextI, j: nextJ });
+            }
+            return acc;
+        }, [])
+    }
+
     GetCellIndex(i, j) {
         return i * this.gridX + j;
     }
@@ -61,19 +196,19 @@ class Grid {
     }
 
     GetNeigborsOfCurrentCell(unvisitedNeigbors) {
-        if(unvisitedNeigbors.length === 1) return unvisitedNeigbors[0]
+        if (unvisitedNeigbors.length === 1) return unvisitedNeigbors[0]
         const c = Math.round(Math.random(0, unvisitedNeigbors.length - 1));
         const n = unvisitedNeigbors[c];
         return n;
     }
 
-    GetAllNeigbors(cell) {
+    GetAllNeigbors(cell, nodes = this.flattenCells) {
         const unvisitedNeigbors = [];
         const { i, j } = cell;
-        const top = i - 1 >= 0 && this.flattenCells[this.GetCellIndex(i - 1, j)];
-        const right = j + 1 < this.gridX && this.flattenCells[this.GetCellIndex(i, j + 1)];
-        const bottom = i + 1 < this.gridX && this.flattenCells[this.GetCellIndex(i + 1, j)];
-        const left = j - 1 >= 0 && this.flattenCells[this.GetCellIndex(i, j - 1)];
+        const top = i - 1 >= 0 && nodes[this.GetCellIndex(i - 1, j)];
+        const right = j + 1 < this.gridX && nodes[this.GetCellIndex(i, j + 1)];
+        const bottom = i + 1 < this.gridX && nodes[this.GetCellIndex(i + 1, j)];
+        const left = j - 1 >= 0 && nodes[this.GetCellIndex(i, j - 1)];
 
         if (top && !top.visited) unvisitedNeigbors.push(top);
         if (right && !right.visited) unvisitedNeigbors.push(right);
@@ -102,6 +237,19 @@ class Grid {
         if (this.gridX !== this.gridY) {
             throw new Error("Invalid grid values. Expected Grid X and Y value is equal");
         }
+    }
+
+    GetNewNodesFromCurrentCells() {
+        return this.flattenCells.map(cell => {
+            return {
+                j: cell.j,
+                i: cell.i,
+                parentNode: null,
+                visited: false,
+                gridIndex: cell.gridIndex,
+                walls: cell.walls,
+            }
+        })
     }
 }
 

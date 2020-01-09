@@ -3,6 +3,37 @@ import '../../App.css';
 import { RobotMover, Direction } from '../../models';
 import { EventTypes } from '../../common';
 
+class TaskQueue {
+    constructor(concurrent = 1) {
+        this.concurrent = concurrent;
+        this.queue = [];
+        this.running = 0;
+        this.done = this.done.bind(this);
+    }
+
+    done() {
+        this.running--;
+        this.Run();
+    }
+
+    AddTask(fn) {
+        return (...args) => {
+            this.queue.push(() => {
+                fn.apply(null, [...args, this.done]);
+            });
+            this.Run();
+        }
+    }
+
+    Run() {
+        if (this.queue.length && this.running < this.concurrent) {
+            this.running++;
+            const nextTask = this.queue.shift();
+            if (nextTask) nextTask();
+        }
+    }
+}
+
 /**
  * Component of RobotController
  * Control the robot by notifing events 
@@ -15,6 +46,7 @@ class RobotController extends React.Component {
         this.SetPosition = this.SetPosition.bind(this);
         this.UpdateXposition = this.UpdateXposition.bind(this);
         this.UpdateYposition = this.UpdateYposition.bind(this);
+        this.moveToTreasure = this.moveToTreasure.bind(this);
         this.robotMover = new RobotMover(null, null);
         this.tresurePositions = [];
         this.grid = null;
@@ -24,6 +56,8 @@ class RobotController extends React.Component {
             direction: null,
             invalidPosition: true,
         }
+        this.MoveRobot = this.MoveRobot.bind(this);
+        this.taskQueue = new TaskQueue();
     }
 
     IsNotValidMove() {
@@ -64,6 +98,24 @@ class RobotController extends React.Component {
     UpdateDirection(value) {
         this.setState({
             direction: value
+        })
+    }
+
+    MoveRobot(i, j, done) {
+        this.robotMover.SetPosition(i, j);
+        this.setState({
+            x: j,
+            y: i,
+        }, () => {
+            this.props.event.emit(EventTypes.MoveRobot, this.robotMover, done);
+            this.FindTreasures();
+        })
+    }
+
+    moveToTreasure() {
+        const paths = this.grid.GetPathFromTo(this.robotMover, this.tresurePositions[0])
+        paths.forEach((path) => {
+            this.taskQueue.AddTask(this.MoveRobot)(path.j, path.i);
         })
     }
 
@@ -124,6 +176,7 @@ class RobotController extends React.Component {
                             <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateYposition(e.target.value)} value={this.state.y} /></div>
                         </div>
                         <button className="set-position clickable" onClick={this.SetPosition}>Set Position</button>
+                        <button onClick={this.moveToTreasure}>Temp button</button>
                     </div>
                 </div>
             </div>
