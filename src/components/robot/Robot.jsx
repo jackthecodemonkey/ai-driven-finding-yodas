@@ -51,7 +51,7 @@ class Robot extends React.Component {
             y: moveTo.top,
         }, () => {
             if (Number.isInteger(x) && Number.isInteger(y)) {
-                this.robotRef.current.style.transition = `transform 300ms ease`;
+                this.robotRef.current.style.transition = `transform 150ms ease`;
                 this.robotRef.current.style.transform = `translateX(${moveTo.left}px) translateY(${moveTo.top}px)`;
             } else {
                 this.robotRef.current.style.transform = `translateX(${moveTo.left}px) translateY(${moveTo.top}px)`;
@@ -59,7 +59,7 @@ class Robot extends React.Component {
 
             setTimeout(()=>{
                 done && done();
-            },300);
+            },150);
         })
     }
 

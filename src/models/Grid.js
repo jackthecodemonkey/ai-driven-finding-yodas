@@ -29,36 +29,19 @@ class PathAlgo {
 
     FindShortestPath({ x: fromY, y: fromX }, { x: toY, y: toX }, algoType = Algorithms.DFS) {
         this.InitializeNodes();
-        // 1. use a path algo 
-        // 2. find shortest direction and path to the gaol position
-        // 3. return the array
         const currentNodeIndex = this.GetCellIndex(fromX, fromY);
         const currentNode = this.nodes[currentNodeIndex];
 
         currentNode.visited = true;
         this.stack.push(currentNode);
-
-        // console.log('toY' ,toY)
-        // console.log('toX ', toX)
-
         while (this.stack.length) {
             this.currentNode = this.stack.pop();
             if (this.currentNode.i === toX && this.currentNode.j === toY) {
                 break;
             }
-            // console.log('this.currentNode')
-            // console.log(this.currentNode);
             const allNeigbors = this.GetAllNeigbors(this.currentNode, this.nodes);
-
-            // console.log('this.nodes')
-            // console.log(this.nodes);
-
-            // console.log('allNeigbors')
-            // console.log(allNeigbors);
             const possibleIndexes = this.GetIndexOfMovablePath(this.currentNode.i, this.currentNode.j, this.currentNode.walls)
             const filteredNeighbors = this.GetFilteredNeigbors(allNeigbors, possibleIndexes);
-            // console.log('filteredNeighbors')
-            // console.log(filteredNeighbors);
             if (filteredNeighbors.length) {
                 this.stack.push(this.currentNode);
                 const next = this.GetNeigborsOfCurrentCell(filteredNeighbors);
@@ -72,37 +55,8 @@ class PathAlgo {
                 this.stack.push(next);
             }
         }
-
-        // console.log('this.currentNode')
-        // console.log(this.currentNode);
-        // console.log(this.RestructPath());
         return this.RestructPath();
-        // initialCell.visited = true;
-        // this.stack.push(initialCell);
 
-
-
-
-        // const initialCell = this.flattenCells[0];
-        // initialCell.visited = true;
-        // this.stack.push(initialCell);
-        // while (this.stack.length) {
-        //     this.currentCell = this.stack.pop();
-        //     const allNeigbors = this.GetAllNeigbors(this.currentCell);
-        //     if (allNeigbors.length) {
-        //         this.stack.push(this.currentCell);
-        //         const next = this.GetNeigborsOfCurrentCell(allNeigbors);
-        //         const { i: nextI, j: nextJ } = next;
-        //         const { i: currentI, j: currentJ } = this.currentCell;
-        //         const [currentNodeWall, nextNodeWall] = this.GetDirection(nextI, nextJ, currentI, currentJ);
-        //         this.currentCell.walls[currentNodeWall] = false;
-        //         next.walls[nextNodeWall] = false;
-        //         next.visited = true;
-        //         this.stack.push(next);
-        //     }
-        // }
-
-        // console.log(filteredNeighbors);
     }
 }
 

@@ -47,6 +47,7 @@ class RobotController extends React.Component {
         this.UpdateXposition = this.UpdateXposition.bind(this);
         this.UpdateYposition = this.UpdateYposition.bind(this);
         this.moveToTreasure = this.moveToTreasure.bind(this);
+        this.getAllTreasures = this.getAllTreasures.bind(this);
         this.robotMover = new RobotMover(null, null);
         this.tresurePositions = [];
         this.grid = null;
@@ -101,29 +102,46 @@ class RobotController extends React.Component {
         })
     }
 
-    MoveRobot(i, j, done) {
+    MoveRobot(i, j, destJ, destI, callback, done) {
         this.robotMover.SetPosition(i, j);
         this.setState({
             x: j,
             y: i,
         }, () => {
             this.props.event.emit(EventTypes.MoveRobot, this.robotMover, done);
-            this.FindTreasures();
+            this.FindTreasures(destJ, destI, callback);
         })
     }
 
-    moveToTreasure() {
-        const paths = this.grid.GetPathFromTo(this.robotMover, this.tresurePositions[0])
-        paths.forEach((path) => {
-            this.taskQueue.AddTask(this.MoveRobot)(path.j, path.i);
-        })
+    getAllTreasures() {
+        const cloned = [...this.tresurePositions];
+        this.moveToTreasure(cloned)
     }
 
-    FindTreasures() {
+    moveToTreasure(treasures) {
+        const nextTreasure = treasures.length && treasures.shift();
+        if (nextTreasure) {
+            const paths = this.grid.GetPathFromTo(this.robotMover, nextTreasure)
+            paths.forEach((path) => {
+                const foundOntheWay = treasures.filter(({ x, y }) => path.j === x && path.i === y);
+                if (!(path.j === nextTreasure.x && path.i === nextTreasure.y) && foundOntheWay.length) {
+                    treasures = treasures.filter(({ x, y }) => !(foundOntheWay[0].x === x && foundOntheWay[0].y === y))
+                }
+                this.taskQueue.AddTask(this.MoveRobot)(path.j, path.i, nextTreasure.x, nextTreasure.y, () => {
+                    this.moveToTreasure(treasures)
+                });
+            })
+        }
+    }
+
+    FindTreasures(destJ, destI, callback) {
         const found = this.tresurePositions.filter(({ x, y }) => this.robotMover.x === x && this.robotMover.y === y);
         if (found.length) {
             this.props.event.emit(EventTypes.FoundTreasure, found[0]);
             this.tresurePositions = this.tresurePositions.filter(({ x, y }) => !(found[0].x === x && found[0].y === y))
+            if (this.robotMover.x === destJ && this.robotMover.y === destI) {
+                callback && callback();
+            }
         }
     }
 
@@ -176,7 +194,7 @@ class RobotController extends React.Component {
                             <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateYposition(e.target.value)} value={this.state.y} /></div>
                         </div>
                         <button className="set-position clickable" onClick={this.SetPosition}>Set Position</button>
-                        <button onClick={this.moveToTreasure}>Temp button</button>
+                        <button onClick={this.getAllTreasures}>Temp button</button>
                     </div>
                 </div>
             </div>
