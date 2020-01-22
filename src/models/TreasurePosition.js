@@ -31,6 +31,18 @@ class TreasurePosition {
         }
         return this.GetPositionPixels(width);
     }
+
+    GetFromFront() {
+        return this.tresurePositions.length && this.tresurePositions[0];
+    }
+
+    HasTreasureFound(pathX, pathY) {
+        return this.tresurePositions.filter(({ x, y }) => pathX === x && pathY === y)
+    }
+
+    FilterPositionsBy(predicate){
+        this.tresurePositions = this.tresurePositions.filter(predicate);
+    }
 }
 
 export default TreasurePosition;

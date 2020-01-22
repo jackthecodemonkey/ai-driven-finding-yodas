@@ -36,7 +36,7 @@ class Board extends React.Component {
             this.setState({
                 treaurePositions: this.treasure.GetRandomPositionOfTresure(5, this.grid.gridWidth),
             }, () => {
-                this.props.event.emit(EventTypes.TreasureInitialized, this.treasure.tresurePositions);
+                this.props.event.emit(EventTypes.TreasureInitialized, this.treasure);
             })
 
         })
