@@ -22,26 +22,17 @@ class Robot extends React.Component {
     }
 
     componentDidMount() {
-        this.props.event.on(EventTypes.RobotDemension, (width, height) => {
-            this.setState({ width, height })
-        })
-        this.props.event.on(EventTypes.MoveRobot, (robotMover, done) => {
-            this.MoveTo(robotMover.GetCurrentPosition(this.state.width, this.state.height), done);
-            ReactTooltip.hide(this.invalidKey)
-            ReactTooltip.hide(this.wrongDirectionRef)
-        })
-        this.props.event.on(EventTypes.ValidKeyPressed, () => {
-            ReactTooltip.hide(this.invalidKey)
-        });
-        this.props.event.on(EventTypes.InvalidKeyPressed, () => {
-            ReactTooltip.show(this.invalidKey)
-        });
-        this.props.event.on(EventTypes.WrongDirection, () => {
-            ReactTooltip.show(this.wrongDirectionRef)
-        });
-        this.props.event.on(EventTypes.FoundTreasure, () => {
-            ReactTooltip.show(this.foundTreasure)
-        })
+        this.props.event
+            .on(EventTypes.RobotDemension, (width, height) => {
+                this.setState({ width, height })
+            })
+            .on(EventTypes.MoveRobot, (robotMover, done) => {
+                this.MoveTo(robotMover.GetCurrentPosition(this.state.width, this.state.height), done);
+                ReactTooltip.hide()
+            })
+            .on(EventTypes.FoundTreasure, () => {
+                ReactTooltip.show(this.foundTreasure)
+            })
     }
 
     MoveTo(moveTo, done) {
@@ -56,10 +47,9 @@ class Robot extends React.Component {
             } else {
                 this.robotRef.current.style.transform = `translateX(${moveTo.left}px) translateY(${moveTo.top}px)`;
             }
-
-            setTimeout(()=>{
+            setTimeout(() => {
                 done && done();
-            },150);
+            }, 150);
         })
     }
 
@@ -74,8 +64,6 @@ class Robot extends React.Component {
 
         return (
             <div ref={this.robotRef} style={style} className="robot">
-                <p ref={ref => this.wrongDirectionRef = ref} data-tip='dude, wrong direction!'></p>
-                <p ref={ref => this.invalidKey = ref} data-tip='invalid command entered'></p>
                 <p ref={ref => this.foundTreasure = ref} data-tip='yay!'></p>
                 <img style={{ width: '50%', height: '50%' }} src={Vader} />
                 <div className="tooltip">

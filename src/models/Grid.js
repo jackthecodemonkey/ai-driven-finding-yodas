@@ -20,8 +20,15 @@ class Grid extends BasePathFinder {
         this.GenerateMaze();
     }
 
-    get GetGridCells() {
+    get BoardGridCells() {
         return this.gridCells;
+    }
+
+    IsInValidMove(x, y) {
+        return (x < 0)
+            || (x >= this.gridX)
+            || (y < 0)
+            || (y >= this.gridY)
     }
 
     GetPathFromTo(from, to) {

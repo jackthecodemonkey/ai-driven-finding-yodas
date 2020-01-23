@@ -20,32 +20,33 @@ class Board extends React.Component {
     }
 
     componentDidMount() {
-        this.props.event.emit(EventTypes.RobotDemension, this.grid.gridWidth, this.grid.gridHeight);
-        this.props.event.emit(EventTypes.PassGrid);
-        this.props.event.on(EventTypes.FoundTreasure, ({ x, y }) => {
-            this.treasure.RemoveTreasue(x, y);
-            this.setState({
-                treaurePositions: this.treasure.GetPositionPixels(this.grid.gridWidth),
+        this.props.event
+            .emit(EventTypes.RobotDemension, this.grid.gridWidth, this.grid.gridHeight)
+            .on(EventTypes.FoundTreasure, ({ x, y }) => {
+                this.treasure.RemoveTreasue(x, y);
+                this.setState({
+                    treaurePositions: this.treasure.GetPositionPixels(this.grid.gridWidth),
+                })
             })
-        })
-        this.props.event.on(EventTypes.PassGrid, () => {
-            this.props.event.emit(EventTypes.GetGrid, this.grid);
-        })
-        this.props.event.on(EventTypes.SetTreasure, (x, y) => {
-            this.treasure = new TreasurePosition(x, y, this.grid.gridX);
-            this.setState({
-                treaurePositions: this.treasure.GetRandomPositionOfTresure(10, this.grid.gridWidth),
-            }, () => {
-                this.props.event.emit(EventTypes.TreasureInitialized, this.treasure);
+        this.props.event
+            .on(EventTypes.RobotControllerInitialized, () => {
+                this.props.event.emit(EventTypes.BoardGrid, this.grid);
             })
+            .on(EventTypes.SetTreasure, (x, y) => {
+                this.treasure = new TreasurePosition(x, y, this.grid.gridX);
+                this.setState({
+                    treaurePositions: this.treasure.GetRandomPositionOfTresure(10, this.grid.gridWidth),
+                }, () => {
+                    this.props.event.emit(EventTypes.TreasureInitialized, this.treasure);
+                })
 
-        })
+            })
     }
 
     render() {
         const gridCell = this.grid
-            .GetGridCells
-            .map((gridRow,i) => <GridRow key={i} gridRow={gridRow} />)
+            .BoardGridCells
+            .map((gridRow, i) => <GridRow key={i} gridRow={gridRow} />)
         return (
             <div className="gridWrapper">
                 {gridCell}

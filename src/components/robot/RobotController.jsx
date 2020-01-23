@@ -10,39 +10,25 @@ class RobotController extends React.Component {
         this.UpdateXposition = this.UpdateXposition.bind(this);
         this.UpdateYposition = this.UpdateYposition.bind(this);
         this.MoveToTreasure = this.MoveToTreasure.bind(this);
+        this.HandleKeyDown = this.HandleKeyDown.bind(this);
+        this.MoveRobot = this.MoveRobot.bind(this);
         this.robotMover = new RobotMover(null, null);
+        this.taskQueue = new TaskQueue();
         this.tresure = null;
         this.grid = null;
         this.state = {
             x: 0,
             y: 0,
             direction: null,
-            invalidPosition: true,
         }
-        this.MoveRobot = this.MoveRobot.bind(this);
-        this.taskQueue = new TaskQueue();
-    }
-
-    IsInValidMove() {
-        return (this.state.x < 0)
-            || (this.state.x >= (this.grid && this.grid.gridX))
-            || (this.state.y < 0)
-            || (this.state.y >= (this.grid && this.grid.gridY))
     }
 
     SetPosition() {
-        if (this.IsInValidMove()) {
-            this.setState({
-                invalidPosition: true,
-            })
-        } else {
-            this.setState({
-                invalidPosition: false
-            }, () => {
-                this.robotMover.SetPosition(this.state.x * 1, this.state.y * 1);
-                this.props.event.emit(EventTypes.MoveRobot, this.robotMover);
-                this.props.event.emit(EventTypes.SetTreasure, this.state.x * 1, this.state.y * 1);
-            })
+        if (!this.grid.IsInValidMove(this.state.x, this.state.y)) {
+            this.robotMover.SetPosition(this.state.x * 1, this.state.y * 1);
+            this.props.event
+                .emit(EventTypes.MoveRobot, this.robotMover)
+                .emit(EventTypes.SetTreasure, this.state.x * 1, this.state.y * 1);
         }
     }
 
@@ -77,7 +63,7 @@ class RobotController extends React.Component {
 
     MoveToTreasure() {
         const nextTreasure = this.tresure && this.tresure.GetFromFront();
-        if (this.tresure && this.tresure.GetFromFront()) {
+        if (nextTreasure) {
             const paths = this.grid.GetPathFromTo(this.robotMover, nextTreasure)
             paths.forEach((path) => {
                 this.taskQueue.AddTask(this.MoveRobot)(path.j, path.i, nextTreasure.x, nextTreasure.y, () => {
@@ -96,45 +82,35 @@ class RobotController extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.props.event.emit(EventTypes.PassGrid);
-        this.props.event.on(EventTypes.GetGrid, grid => { this.grid = grid; });
-        this.props.event.on(EventTypes.TreasureInitialized, (treasure) => { this.tresure = treasure });
-        window.addEventListener('keydown', (e) => {
-            if (e.path[0].nodeName === "INPUT") return;
-            if (this.state.invalidPosition) return;
-            if (this.robotMover.ValidateKeyCode(e.keyCode)) {
-                this.props.event.emit(EventTypes.ValidKeyPressed);
-                if (this.robotMover.CanRobotMove(e.keyCode, this.grid)) {
-                    this.robotMover.UpdateRobotPosition(e.keyCode);
-                    this.robotMover.UpdateDirection(e.keyCode);
-                    this.props.event.emit(EventTypes.MoveRobot, this.robotMover);
-                    this.FindTreasures();
-                    this.UpdateXposition(this.robotMover.x);
-                    this.UpdateYposition(this.robotMover.y);
-                    this.UpdateDirection(this.robotMover.currentDirection);
-                } else {
-                    this.props.event.emit(EventTypes.WrongDirection);
-                }
-            } else {
-                this.props.event.emit(EventTypes.InvalidKeyPressed);
+    HandleKeyDown(e) {
+        if (e.path[0].nodeName === "INPUT") return;
+        if (this.robotMover.ValidateKeyCode(e.keyCode)) {
+            this.props.event.emit(EventTypes.ValidKeyPressed);
+            if (this.robotMover.CanRobotMove(e.keyCode, this.grid)) {
+                this.robotMover
+                    .UpdateRobotPosition(e.keyCode)
+                    .UpdateDirection(e.keyCode);
+                this.props.event.emit(EventTypes.MoveRobot, this.robotMover);
+                this.FindTreasures();
+                this.UpdateXposition(this.robotMover.x);
+                this.UpdateYposition(this.robotMover.y);
+                this.UpdateDirection(this.robotMover.currentDirection);
             }
-        })
+        }
+    }
+
+    componentDidMount() {
+        window.addEventListener('keydown', this.HandleKeyDown);
+        this.props.event
+            .emit(EventTypes.RobotControllerInitialized)
+            .on(EventTypes.BoardGrid, grid => { this.grid = grid; })
+            .on(EventTypes.TreasureInitialized, treasure => { this.tresure = treasure });
     }
 
     render() {
         return (
             <div className="robot-controller">
                 <div className="wrapper">
-                    <div className="status">
-                        <div style={{ marginBottom: '5px' }}>Position X : {!this.IsInValidMove() && this.state.x}</div>
-                        <div style={{ marginBottom: '5px' }}>Position Y : {!this.IsInValidMove() && this.state.y}</div>
-                        <div style={{ marginBottom: '5px' }}>Last entered direction</div>
-                        <div style={{ padding: '10px', marginBottom: '10px', border: '1px solid lightcoral', background: this.state.direction === Direction.UP ? '#ffc5c580' : '' }}>Up</div>
-                        <div style={{ padding: '10px', marginBottom: '10px', border: '1px solid lightcoral', background: this.state.direction === Direction.DOWN ? '#ffc5c580' : '' }}>Down</div>
-                        <div style={{ padding: '10px', marginBottom: '10px', border: '1px solid lightcoral', background: this.state.direction === Direction.LEFT ? '#ffc5c580' : '' }}>Left</div>
-                        <div style={{ padding: '10px', marginBottom: '10px', border: '1px solid lightcoral', background: this.state.direction === Direction.RIGHT ? '#ffc5c580' : '' }}>Right</div>
-                    </div>
                     <div className="setRobot">
                         <div className="input-group">
                             <div className="label">X</div>

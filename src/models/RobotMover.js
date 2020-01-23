@@ -41,6 +41,7 @@ class RobotMover {
         if (keyCode === 38) this.y -= 1;
         if (keyCode === 39) this.x += 1;
         if (keyCode === 40) this.y += 1;
+        return this;
     }
 
     UpdateDirection(keyCode) {
@@ -48,6 +49,7 @@ class RobotMover {
         if (keyCode === 38) this.currentDirection = Direction.UP;
         if (keyCode === 39) this.currentDirection = Direction.RIGHT;
         if (keyCode === 40) this.currentDirection = Direction.DOWN;
+        return this;
     }
 }
 
