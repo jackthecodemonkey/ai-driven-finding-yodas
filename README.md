@@ -8,7 +8,8 @@
 
 ## Current Progress 23/01/202
 
-* Darth vader finds all R2D2 by dumb DFS algorithm.
+* Grid size and each cell size can be updated by passing props
+* Darth vader finds all R2D2 on the map by dumb DFS algorithm.
 * Code refactoring
 
 ![Screenshot](/public/screenshot/23_01_2020.gif)
