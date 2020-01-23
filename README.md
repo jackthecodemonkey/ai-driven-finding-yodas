@@ -9,7 +9,7 @@
 ## Current Progress & features
 
 * Grid size and each cell size can be updated by passing props
-* Darth vader finds all R2D2 on the map by dumb DFS algorithm automatically.
+* Darth vader finds all R2D2 automatically on the map by dumb DFS algorithm.
 * Able to set Dath vader's start position
 * Refactoring required!
 
