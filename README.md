@@ -9,7 +9,6 @@
 ## Current Progress & features
 
 * Grid size and each cell size can be updated by passing props
-* User can be manually move Darth vader to collect R2D2
 * Darth vader finds all R2D2 on the map by dumb DFS algorithm automatically.
 * Able to set Dath vader's start position
 * Refactoring required!
