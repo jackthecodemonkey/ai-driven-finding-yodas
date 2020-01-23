@@ -3,22 +3,15 @@ import '../../App.css';
 import { RobotMover, Direction } from '../../models';
 import { EventTypes, TaskQueue } from '../../common';
 
-/**
- * Component of RobotController
- * Control the robot by notifing events 
- * Todo:: refactor. componentDidMount and render are bloated
- *        status section doesn't need to be part of this component
- */
 class RobotController extends React.Component {
     constructor(props) {
         super(props);
         this.SetPosition = this.SetPosition.bind(this);
         this.UpdateXposition = this.UpdateXposition.bind(this);
         this.UpdateYposition = this.UpdateYposition.bind(this);
-        this.moveToTreasure = this.moveToTreasure.bind(this);
-        this.getAllTreasures = this.getAllTreasures.bind(this);
+        this.MoveToTreasure = this.MoveToTreasure.bind(this);
         this.robotMover = new RobotMover(null, null);
-        this.tresurePositions = [];
+        this.tresure = null;
         this.grid = null;
         this.state = {
             x: 0,
@@ -30,7 +23,7 @@ class RobotController extends React.Component {
         this.taskQueue = new TaskQueue();
     }
 
-    IsNotValidMove() {
+    IsInValidMove() {
         return (this.state.x < 0)
             || (this.state.x >= (this.grid && this.grid.gridX))
             || (this.state.y < 0)
@@ -38,7 +31,7 @@ class RobotController extends React.Component {
     }
 
     SetPosition() {
-        if (this.IsNotValidMove()) {
+        if (this.IsInValidMove()) {
             this.setState({
                 invalidPosition: true,
             })
@@ -71,52 +64,42 @@ class RobotController extends React.Component {
         })
     }
 
-    MoveRobot(i, j, destJ, destI, callback, done) {
-        this.robotMover.SetPosition(i, j);
+    MoveRobot(robotI, robotJ, destJ, destI, callback, done) {
+        this.robotMover.SetPosition(robotI, robotJ);
         this.setState({
-            x: j,
-            y: i,
+            x: robotJ,
+            y: robotI,
         }, () => {
             this.props.event.emit(EventTypes.MoveRobot, this.robotMover, done);
             this.FindTreasures(destJ, destI, callback);
         })
     }
 
-    getAllTreasures() {
-        this.moveToTreasure([...this.tresurePositions])
-    }
-
-    moveToTreasure(treasures) {
-        const nextTreasure = treasures.length && treasures.shift();
-        if (nextTreasure) {
+    MoveToTreasure() {
+        const nextTreasure = this.tresure && this.tresure.GetFromFront();
+        if (this.tresure && this.tresure.GetFromFront()) {
             const paths = this.grid.GetPathFromTo(this.robotMover, nextTreasure)
             paths.forEach((path) => {
-                const foundOntheWay = treasures.filter(({ x, y }) => path.j === x && path.i === y);
-                if (!(path.j === nextTreasure.x && path.i === nextTreasure.y) && foundOntheWay.length) {
-                    treasures = treasures.filter(({ x, y }) => !(foundOntheWay[0].x === x && foundOntheWay[0].y === y))
-                }
                 this.taskQueue.AddTask(this.MoveRobot)(path.j, path.i, nextTreasure.x, nextTreasure.y, () => {
-                    this.moveToTreasure(treasures)
+                    this.MoveToTreasure()
                 });
             })
         }
     }
 
     FindTreasures(destJ, destI, callback) {
-        const found = this.tresurePositions.filter(({ x, y }) => this.robotMover.x === x && this.robotMover.y === y);
+        const found = this.tresure.HasTreasureFound(this.robotMover.x, this.robotMover.y);
         if (found.length) {
             this.props.event.emit(EventTypes.FoundTreasure, found[0]);
-            this.tresurePositions = this.tresurePositions.filter(({ x, y }) => !(found[0].x === x && found[0].y === y))
-            if (this.robotMover.x === destJ && this.robotMover.y === destI) {
-                callback && callback();
-            }
+            this.tresure.FilterPositionsBy(({ x, y }) => !(found[0].x === x && found[0].y === y));
+            if (this.robotMover.x === destJ && this.robotMover.y === destI) callback && callback();
         }
     }
 
     componentDidMount() {
         this.props.event.emit(EventTypes.PassGrid);
         this.props.event.on(EventTypes.GetGrid, grid => { this.grid = grid; });
-        this.props.event.on(EventTypes.TreasureInitialized, (treaurePositions) => { this.tresurePositions = treaurePositions });
+        this.props.event.on(EventTypes.TreasureInitialized, (treasure) => { this.tresure = treasure });
         window.addEventListener('keydown', (e) => {
             if (e.path[0].nodeName === "INPUT") return;
             if (this.state.invalidPosition) return;
@@ -144,8 +127,8 @@ class RobotController extends React.Component {
             <div className="robot-controller">
                 <div className="wrapper">
                     <div className="status">
-                        <div style={{ marginBottom: '5px' }}>Position X : {!this.IsNotValidMove() && this.state.x}</div>
-                        <div style={{ marginBottom: '5px' }}>Position Y : {!this.IsNotValidMove() && this.state.y}</div>
+                        <div style={{ marginBottom: '5px' }}>Position X : {!this.IsInValidMove() && this.state.x}</div>
+                        <div style={{ marginBottom: '5px' }}>Position Y : {!this.IsInValidMove() && this.state.y}</div>
                         <div style={{ marginBottom: '5px' }}>Last entered direction</div>
                         <div style={{ padding: '10px', marginBottom: '10px', border: '1px solid lightcoral', background: this.state.direction === Direction.UP ? '#ffc5c580' : '' }}>Up</div>
                         <div style={{ padding: '10px', marginBottom: '10px', border: '1px solid lightcoral', background: this.state.direction === Direction.DOWN ? '#ffc5c580' : '' }}>Down</div>
@@ -162,7 +145,7 @@ class RobotController extends React.Component {
                             <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateYposition(e.target.value)} value={this.state.y} /></div>
                         </div>
                         <button className="set-position clickable" onClick={this.SetPosition}>Set Position</button>
-                        <button onClick={this.getAllTreasures}>Temp button</button>
+                        <button onClick={this.MoveToTreasure}>Temp button</button>
                     </div>
                 </div>
             </div>
