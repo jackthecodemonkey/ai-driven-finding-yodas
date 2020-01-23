@@ -6,10 +6,11 @@
 * The mando avoids enemies and find all baby yodas 
 * Reinforcement learning will be written in Rust and compile it to web assembly
 
-## Current Progress 23/01/2020
+## Current Progress & features
 
 * Grid size and each cell size can be updated by passing props
-* Darth vader finds all R2D2 on the map by dumb DFS algorithm.
-* Code refactoring
+* User can be manually move Darth vader to collect R2D2
+* Darth vader finds all R2D2 on the map by dumb DFS algorithm automatically.
+* Refactoring required!
 
 ![Screenshot](/public/screenshot/23_01_2020.gif)
