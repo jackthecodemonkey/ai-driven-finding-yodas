@@ -9,9 +9,9 @@ class RobotController extends React.Component {
         this.SetPosition = this.SetPosition.bind(this);
         this.UpdateXposition = this.UpdateXposition.bind(this);
         this.UpdateYposition = this.UpdateYposition.bind(this);
-        this.moveToTreasure = this.moveToTreasure.bind(this);
+        this.MoveToTreasure = this.MoveToTreasure.bind(this);
         this.robotMover = new RobotMover(null, null);
-        this.tresure = [];
+        this.tresure = null;
         this.grid = null;
         this.state = {
             x: 0,
@@ -75,13 +75,13 @@ class RobotController extends React.Component {
         })
     }
 
-    moveToTreasure() {
-        const nextTreasure = this.tresure.GetFromFront();
-        if (nextTreasure) {
+    MoveToTreasure() {
+        const nextTreasure = this.tresure && this.tresure.GetFromFront();
+        if (this.tresure && this.tresure.GetFromFront()) {
             const paths = this.grid.GetPathFromTo(this.robotMover, nextTreasure)
             paths.forEach((path) => {
                 this.taskQueue.AddTask(this.MoveRobot)(path.j, path.i, nextTreasure.x, nextTreasure.y, () => {
-                    this.moveToTreasure()
+                    this.MoveToTreasure()
                 });
             })
         }
@@ -145,7 +145,7 @@ class RobotController extends React.Component {
                             <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateYposition(e.target.value)} value={this.state.y} /></div>
                         </div>
                         <button className="set-position clickable" onClick={this.SetPosition}>Set Position</button>
-                        <button onClick={this.moveToTreasure}>Temp button</button>
+                        <button onClick={this.MoveToTreasure}>Temp button</button>
                     </div>
                 </div>
             </div>
