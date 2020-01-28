@@ -32,12 +32,21 @@ class PathAlgo {
         return paths;
     }
 
-    FindPath({ x: fromY, y: fromX }, { x: toY, y: toX }, algoType = Algorithms.DFS) {
+    InitializePathAlgo(algoType) {
         this.nodes = this.GetNewNodesFromBaseCells();
         const AlgoClass = this.GetClassByName(algoType);
-        const pathFinder = new AlgoClass(this.nodes, this.currentNode, this.stack, this.gridSize);
+        return new AlgoClass(this.nodes, this.currentNode, this.stack, this.gridSize);
+    }
+
+    FindPath({ x: fromY, y: fromX }, { x: toY, y: toX }, algoType = Algorithms.DFS) {
+        const pathFinder = this.InitializePathAlgo(algoType);
         this.currentNode = pathFinder.GetPath({ x: fromY, y: fromX }, { x: toY, y: toX });
         return this.RestructPath();
+    }
+
+    GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY , algoType = Algorithms.DFS) {
+        const pathFinder = this.InitializePathAlgo(algoType);
+        const path = pathFinder.GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY);
     }
 
     GetClassByName(algoType) {
