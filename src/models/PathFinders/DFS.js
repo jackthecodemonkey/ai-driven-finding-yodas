@@ -29,6 +29,14 @@ class DFS extends BasePathFinder {
         return this.currentNode.i === toX && this.currentNode.j === toY
     }
 
+    // Find shortest destination(x,y) from all possible destination (array) with from x,y
+    // using dfs,  
+    // return all path from current position to the selected destination
+    // and this will replace logic written in MoveToTreasure ( GetPathFromTo )
+    GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY) {
+        console.log(everyDestinations, fromX, fromY)
+    }
+
     GetPathByDFS(neighbors) {
         this.stack.push(this.currentNode);
         const next = this.GetNeigborsOfCurrentCell(neighbors);
