@@ -34,7 +34,36 @@ class DFS extends BasePathFinder {
     // return all path from current position to the selected destination
     // and this will replace logic written in MoveToTreasure ( GetPathFromTo )
     GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY) {
-        console.log(everyDestinations, fromX, fromY)
+        const currentNode = this.nodes[this.GetCellIndex(fromX, fromY, this.gridSize)];
+        const temp = [];
+        currentNode.visited = true;
+        this.stack.push(currentNode);
+        while (this.stack.length) {
+            this.currentNode = this.stack.pop();
+            const IsOneOfDestinations = everyDestinations.find(({ x, y }) => {
+                return x === this.currentNode.j && y === this.currentNode.i
+            });
+            if (IsOneOfDestinations) {
+                let current = this.currentNode;
+                let paths = [];
+                while (current !== null) {
+                    paths.unshift({ y: current.i, x: current.j });
+                    current = current.parentNode;
+                }
+                temp.push(paths)
+                continue;
+            }
+
+            const filteredNeighbors = this.GetFilteredNeigbors(
+                this.GetAllNeigbors(this.currentNode, this.nodes, this.gridSize),
+                this.GetIndexOfMovablePath(this.currentNode.i, this.currentNode.j, this.currentNode.walls)
+            );
+            if (filteredNeighbors.length) this.GetPathByDFS(filteredNeighbors)
+        }
+        temp.sort((a,b)=>{
+            return a.length - b.length;
+        })
+        return temp[0];
     }
 
     GetPathByDFS(neighbors) {
