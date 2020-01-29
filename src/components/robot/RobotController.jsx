@@ -62,7 +62,7 @@ class RobotController extends React.Component {
     }
 
     MoveToTreasure() {
-        // this.grid.GetShortestDestinationFromCurrent(this.tresure.tresurePositions, this.robotMover.x, this.robotMover.y);
+        console.log(this.grid.GetShortestDestinationFromCurrent(this.tresure.tresurePositions, this.robotMover.x, this.robotMover.y));
         const nextTreasure = this.tresure && this.tresure.GetFromFront();
         if (nextTreasure) {
             const paths = this.grid.GetPathFromTo(this.robotMover, nextTreasure)

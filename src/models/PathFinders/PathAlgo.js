@@ -46,7 +46,7 @@ class PathAlgo {
 
     GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY , algoType = Algorithms.DFS) {
         const pathFinder = this.InitializePathAlgo(algoType);
-        const path = pathFinder.GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY);
+        return pathFinder.GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY);
     }
 
     GetClassByName(algoType) {
