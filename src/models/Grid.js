@@ -31,10 +31,6 @@ class Grid extends BasePathFinder {
             || (y >= this.gridY)
     }
 
-    GetPathFromTo(from, to) {
-        return new PathAlgo(this.flattenCells, this.gridX).FindPath(from, to);
-    }
-
     GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY) {
         return new PathAlgo(this.flattenCells, this.gridX).GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY);
     }

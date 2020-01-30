@@ -38,12 +38,6 @@ class PathAlgo {
         return new AlgoClass(this.nodes, this.currentNode, this.stack, this.gridSize);
     }
 
-    FindPath({ x: fromY, y: fromX }, { x: toY, y: toX }, algoType = Algorithms.DFS) {
-        const pathFinder = this.InitializePathAlgo(algoType);
-        this.currentNode = pathFinder.GetPath({ x: fromY, y: fromX }, { x: toY, y: toX });
-        return this.RestructPath();
-    }
-
     GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY , algoType = Algorithms.DFS) {
         const pathFinder = this.InitializePathAlgo(algoType);
         return pathFinder.GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY);

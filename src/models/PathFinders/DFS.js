@@ -9,32 +9,12 @@ class DFS extends BasePathFinder {
         this.stack = stack;
     }
 
-    GetPath({ x: fromY, y: fromX }, { x: toY, y: toX }) {
-        const currentNode = this.nodes[this.GetCellIndex(fromX, fromY, this.gridSize)];
-        currentNode.visited = true;
-        this.stack.push(currentNode);
-        while (this.stack.length) {
-            this.currentNode = this.stack.pop();
-            if (this.IsDestination(toX, toY)) break;
-            const filteredNeighbors = this.GetFilteredNeigbors(
-                this.GetAllNeigbors(this.currentNode, this.nodes, this.gridSize),
-                this.GetIndexOfMovablePath(this.currentNode.i, this.currentNode.j, this.currentNode.walls)
-            );
-            if (filteredNeighbors.length) this.GetPathByDFS(filteredNeighbors)
-        }
-        return this.currentNode;
-    }
-
     IsDestination(toX, toY) {
-        return this.currentNode.i === toX && this.currentNode.j === toY
+        return this.currentNode.i === toY && this.currentNode.j === toX
     }
 
-    // Find shortest destination(x,y) from all possible destination (array) with from x,y
-    // using dfs,  
-    // return all path from current position to the selected destination
-    // and this will replace logic written in MoveToTreasure ( GetPathFromTo )
     GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY) {
-        const currentNode = this.nodes[this.GetCellIndex(fromX, fromY, this.gridSize)];
+        const currentNode = this.nodes[this.GetCellIndex(fromY, fromX, this.gridSize)];
         const temp = [];
         currentNode.visited = true;
         this.stack.push(currentNode);
@@ -44,7 +24,7 @@ class DFS extends BasePathFinder {
                 return x === this.currentNode.j && y === this.currentNode.i
             });
             if (IsOneOfDestinations) {
-                let current = this.currentNode;
+                let current = { ...this.currentNode };
                 let paths = [];
                 while (current !== null) {
                     paths.unshift({ y: current.i, x: current.j });
@@ -60,9 +40,10 @@ class DFS extends BasePathFinder {
             );
             if (filteredNeighbors.length) this.GetPathByDFS(filteredNeighbors)
         }
-        temp.sort((a,b)=>{
+        temp.sort((a, b) => {
             return a.length - b.length;
         })
+
         return temp[0];
     }
 
