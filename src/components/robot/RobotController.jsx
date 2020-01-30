@@ -51,7 +51,7 @@ class RobotController extends React.Component {
     }
 
     MoveRobot(robotI, robotJ, destJ, destI, callback, done) {
-        this.robotMover.SetPosition(robotI, robotJ);
+        this.robotMover.SetPosition(robotJ, robotI);
         this.setState({
             x: robotJ,
             y: robotI,
@@ -62,12 +62,12 @@ class RobotController extends React.Component {
     }
 
     MoveToTreasure() {
-        console.log(this.grid.GetShortestDestinationFromCurrent(this.tresure.tresurePositions, this.robotMover.x, this.robotMover.y));
-        const nextTreasure = this.tresure && this.tresure.GetFromFront();
+        const shortestDest = this.grid.GetShortestDestinationFromCurrent(this.tresure.tresurePositions, this.robotMover.x, this.robotMover.y);
+        if(shortestDest && shortestDest.length) shortestDest.shift();
+        const nextTreasure = shortestDest && shortestDest.length && shortestDest[shortestDest.length-1];
         if (nextTreasure) {
-            const paths = this.grid.GetPathFromTo(this.robotMover, nextTreasure)
-            paths.forEach((path) => {
-                this.taskQueue.AddTask(this.MoveRobot)(path.j, path.i, nextTreasure.x, nextTreasure.y, () => {
+            shortestDest.forEach((path) => {
+                this.taskQueue.AddTask(this.MoveRobot)(path.y, path.x, nextTreasure.x, nextTreasure.y, () => {
                     this.MoveToTreasure()
                 });
             })
