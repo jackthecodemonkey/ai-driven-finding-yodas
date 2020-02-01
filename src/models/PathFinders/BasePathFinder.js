@@ -19,6 +19,16 @@ class BasePathFinder {
         return unvisitedNeigbors;
     }
 
+    RestructPath(currentNode) {
+        let current = currentNode;
+        let paths = [];
+        while (current !== null) {
+            paths.unshift({ y: current.i, x: current.j });
+            current = current.parentNode;
+        }
+        return paths;
+    }
+
     GetNeigborsOfCurrentCell(unvisitedNeigbors) {
         if (unvisitedNeigbors.length === 1) return unvisitedNeigbors[0]
         const c = Math.round(Math.random(0, unvisitedNeigbors.length - 1));

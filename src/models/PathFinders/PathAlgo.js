@@ -22,16 +22,6 @@ class PathAlgo {
         })
     }
 
-    RestructPath() {
-        let current = this.currentNode;
-        let paths = [];
-        while (current !== null) {
-            paths.unshift({ i: current.i, j: current.j });
-            current = current.parentNode;
-        }
-        return paths;
-    }
-
     InitializePathAlgo(algoType) {
         this.nodes = this.GetNewNodesFromBaseCells();
         const AlgoClass = this.GetClassByName(algoType);

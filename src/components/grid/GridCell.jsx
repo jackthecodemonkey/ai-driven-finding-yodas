@@ -49,7 +49,9 @@ class GridCell extends React.Component {
         }
 
         return (
-            <div style={finalStyle}></div>
+            <div style={finalStyle}>
+                {/* {this.props.i},{this.props.j} */}
+            </div>
         );
     }
 }
