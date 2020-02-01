@@ -13,64 +13,53 @@ class DFS extends BasePathFinder {
         return this.currentNode.i === toY && this.currentNode.j === toX
     }
 
+    IsOneOfDestinations(destinations) {
+        return destinations.find(({ x, y }) => this.IsDestination(x,y));
+    }
+    
     GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY) {
         const currentNode = this.nodes[this.GetCellIndex(fromY, fromX, this.gridSize)];
-        const temp = [];
+        const directionPaths = [];
+        const nearestDests = [];
         currentNode.visited = true;
-        const pp = [];
         this.stack.push(currentNode);
         while (this.stack.length) {
             this.currentNode = this.stack.pop();
-
-            const IsOneOfDestinations = everyDestinations.find(({ x, y }) => {
-                return x === this.currentNode.j && y === this.currentNode.i
-            });
-
+            
             const filteredNeighbors = this.GetFilteredNeigbors(
                 this.GetAllNeigbors(this.currentNode, this.nodes, this.gridSize),
                 this.GetIndexOfMovablePath(this.currentNode.i, this.currentNode.j, this.currentNode.walls)
             );
-            if (filteredNeighbors.length) {
-                this.GetPathByDFS(filteredNeighbors)
-            }
 
-            if (IsOneOfDestinations) {
-                let current = { ...this.currentNode };
-                let paths = [];
-                while (current !== null) {
-                    paths.unshift({ y: current.i, x: current.j });
-                    current = current.parentNode;
-                }
+            if (filteredNeighbors.length) this.GetPathByDFS(filteredNeighbors)
+
+            if (this.IsOneOfDestinations(everyDestinations)) {
+                let paths = this.RestructPath({ ...this.currentNode });
 
                 if (paths.find(p => p.x === fromX && p.y === fromY)) {
-                    const hasDestPreviousDest = paths.filter(p => pp.find(preP => (p.x === preP.dest.j && p.y === preP.dest.i)))
-                    if (!hasDestPreviousDest.length) {
-                        pp.push({
+                    const hasDestPreviousDest = paths.filter(p => nearestDests.find(preP => (p.x === preP.dest.j && p.y === preP.dest.i)))
+                    if (!hasDestPreviousDest.length) /* This node is the first branch from root */ {
+                        nearestDests.push({
                             dest: { ...this.currentNode },
                             total: paths.length,
                         })
-                    } else {
-                        const pre = hasDestPreviousDest[0];
-                        pp.forEach((p) => {
-                            if (p.dest.i === pre.y && p.dest.j === pre.x) {
+                    } else { /* The node has parent node which was one of destinations. we sum paths length */
+                        nearestDests.forEach((p) => {
+                            if (p.dest.i === hasDestPreviousDest[0].y && p.dest.j === hasDestPreviousDest[0].x) {
                                 p.total += paths.length
                             }
                         })
                     }
                 }
-
-                temp.push(paths)
+                directionPaths.push(paths)
             }
         }
-        temp.sort((a, b) => {
-            return a.length - b.length;
-        })
 
-        pp.sort((a, b) => {
+        nearestDests.sort((a, b) => {
             return a.total - b.total;
         })
-        const short = temp.find(t => t[t.length - 1].y === pp[0].dest.i && t[t.length - 1].x === pp[0].dest.j)
-        return short ? short : temp[0];
+        const short = directionPaths.find(t => t[t.length - 1].y === nearestDests[0].dest.i && t[t.length - 1].x === nearestDests[0].dest.j)
+        return short ? short : directionPaths[0];
     }
 
     GetPathByDFS(neighbors) {
