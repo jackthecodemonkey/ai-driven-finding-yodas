@@ -16,13 +16,8 @@ class DFS extends BasePathFinder {
     GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY) {
         const currentNode = this.nodes[this.GetCellIndex(fromY, fromX, this.gridSize)];
         const temp = [];
-        const startNode = {...currentNode};
         currentNode.visited = true;
-        let currentPathTotal = 0;
         const pp = [];
-        let count = -1;
-        // console.log("start ")
-        // console.log(currentNode)
         this.stack.push(currentNode);
         while (this.stack.length) {
             this.currentNode = this.stack.pop();
@@ -35,38 +30,11 @@ class DFS extends BasePathFinder {
                 this.GetAllNeigbors(this.currentNode, this.nodes, this.gridSize),
                 this.GetIndexOfMovablePath(this.currentNode.i, this.currentNode.j, this.currentNode.walls)
             );
-            if (filteredNeighbors.length) {   
+            if (filteredNeighbors.length) {
                 this.GetPathByDFS(filteredNeighbors)
-            }   
-
-            // console.log("stack")
-            // console.log([...this.stack]);
-
-            if(this.stack.length === 1 && this.stack[0].i === startNode.i && this.stack[0].j === startNode.j){
-                // console.log("end of the node reached")
-                // console.log([...everyDestinations])
-                // console.log(pp);
-                // console.log("end of stack")
-                // console.log("this.currentNode")
-                // console.log(this.currentNode);
-                
-
-                // console.log(count);
-                // if(pp && pp.length && pp[count]) {
-                //     pp[count].total = currentPathTotal;
-                //     if(IsOneOfDestinations) {
-                //         currentPathTotal = 0;
-                //     }
-                // }
-
             }
 
             if (IsOneOfDestinations) {
-                // check if paths includes initial path
-                // if it does, push the dest into array
-                // and remove continue to go to next destination
-                // sum all path length
-                // stop when last element from stack is initial start
                 let current = { ...this.currentNode };
                 let paths = [];
                 while (current !== null) {
@@ -74,46 +42,34 @@ class DFS extends BasePathFinder {
                     current = current.parentNode;
                 }
 
-                if(paths.find(p=>p.x === fromX && p.y === fromY)) {
-                    const hasDestPreviousDest = paths.filter(p=> pp.find(preP => (p.x === preP.dest.j && p.y === preP.dest.i)) )
-                    if(!hasDestPreviousDest.length){
+                if (paths.find(p => p.x === fromX && p.y === fromY)) {
+                    const hasDestPreviousDest = paths.filter(p => pp.find(preP => (p.x === preP.dest.j && p.y === preP.dest.i)))
+                    if (!hasDestPreviousDest.length) {
                         pp.push({
-                            dest: {...this.currentNode},
+                            dest: { ...this.currentNode },
                             total: paths.length,
                         })
-                        console.log("count");
-                        count++;
-                    }
-
-                    if(hasDestPreviousDest.length) {
+                    } else {
                         const pre = hasDestPreviousDest[0];
-                        pp.forEach((p)=>  {
-                            if(p.dest.i === pre.y && p.dest.j === pre.x){
+                        pp.forEach((p) => {
+                            if (p.dest.i === pre.y && p.dest.j === pre.x) {
                                 p.total += paths.length
                             }
                         })
                     }
-
-                    // currentPathTotal = 0;
                 }
 
                 temp.push(paths)
-                // currentPathTotal += paths.length;
-                // continue;
-            } 
+            }
         }
         temp.sort((a, b) => {
             return a.length - b.length;
         })
 
-        pp.sort((a,b)=>{
+        pp.sort((a, b) => {
             return a.total - b.total;
         })
-        const short = temp.find(t=>t[t.length-1].y === pp[0].i && t[t.length-1].x === pp[0].j)
-
-        console.log(pp);
-
-
+        const short = temp.find(t => t[t.length - 1].y === pp[0].dest.i && t[t.length - 1].x === pp[0].dest.j)
         return short ? short : temp[0];
     }
 
