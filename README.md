@@ -7,7 +7,7 @@
   - in a maze, I was unable to use some of well known search algos like A*. 
   - My current strategy is the following. 
   1. Find neighbors. 
-  2. for each neighbors, search all the way down to leaf nodes to find all R2D2, when the node is in deadlock,
+  2. for each neighbor, search all the way down to leaf nodes to find all R2D2, when the node is in deadlock,
      sum total path all the way to start point.
   3. find which neighbor I need to select and go based on sum value -> shortest first
   
