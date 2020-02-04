@@ -1,11 +1,5 @@
 # Fun project - AI driven path finder
 
-## Goal of the project
-* Able to add enemies on the map
-* Enemies automatically try to catch the mando
-* The mando avoids enemies and find all baby yodas 
-* Reinforcement learning will be written in Rust and compile it to web assembly
-
 ## Current Progress & features
 
 * Darth vader finds all R2D2 in shortest path using greedy search.
@@ -21,3 +15,9 @@
   it finds out which way is the best to go among the neighbors to minimize the Darth vader's total moves
 
 ![Screenshot](/public/screenshot/04_02_2020.gif)
+
+## Goal of the project
+* Able to add enemies on the map
+* Enemies automatically try to catch the mando
+* The mando avoids enemies and find all baby yodas ( currently Darth vader finds R2D2s )
+* Reinforcement learning will be written in Rust, compile it to web assembly and use it in browser
