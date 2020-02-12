@@ -57,12 +57,12 @@ class RobotController extends React.Component {
             y: robotI,
         }, () => {
             this.props.event.emit(EventTypes.MoveRobot, this.robotMover, done);
-            this.FindTreasures(destJ, destI, callback);
+            this.findAndUpdateTreasures(destJ, destI, callback);
         })
     }
 
     MoveToTreasure() {
-        const shortestDest = this.grid.GetShortestDestinationFromCurrent(this.tresure.tresurePositions, this.robotMover.x, this.robotMover.y);
+        const shortestDest = this.grid.GetDestinationFromCurrent(this.tresure.tresurePositions, this.robotMover.x, this.robotMover.y);
         if(shortestDest && shortestDest.length) shortestDest.shift();
         const nextTreasure = shortestDest && shortestDest.length && shortestDest[shortestDest.length-1];
         if (nextTreasure) {
@@ -74,7 +74,7 @@ class RobotController extends React.Component {
         }
     }
 
-    FindTreasures(destJ, destI, callback) {
+    findAndUpdateTreasures(destJ, destI, callback) {
         const found = this.tresure.HasTreasureFound(this.robotMover.x, this.robotMover.y);
         if (found.length) {
             this.props.event.emit(EventTypes.FoundTreasure, found[0]);
@@ -92,7 +92,7 @@ class RobotController extends React.Component {
                     .UpdateRobotPosition(e.keyCode)
                     .UpdateDirection(e.keyCode);
                 this.props.event.emit(EventTypes.MoveRobot, this.robotMover);
-                this.FindTreasures();
+                this.findAndUpdateTreasures();
                 this.UpdateXposition(this.robotMover.x);
                 this.UpdateYposition(this.robotMover.y);
                 this.UpdateDirection(this.robotMover.currentDirection);

@@ -28,9 +28,9 @@ class PathAlgo {
         return new AlgoClass(this.nodes, this.currentNode, this.stack, this.gridSize);
     }
 
-    GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY , algoType = Algorithms.DFS) {
+    GetDestinationFromCurrent(everyDestinations, fromX, fromY , algoType = Algorithms.DFS) {
         const pathFinder = this.InitializePathAlgo(algoType);
-        return pathFinder.GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY);
+        return pathFinder.GetDestinationFromCurrent(everyDestinations, fromX, fromY);
     }
 
     GetClassByName(algoType) {

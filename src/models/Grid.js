@@ -31,8 +31,8 @@ class Grid extends BasePathFinder {
             || (y >= this.gridY)
     }
 
-    GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY) {
-        return new PathAlgo(this.flattenCells, this.gridX).GetShortestDestinationFromCurrent(everyDestinations, fromX, fromY);
+    GetDestinationFromCurrent(everyDestinations, fromX, fromY) {
+        return new PathAlgo(this.flattenCells, this.gridX).GetDestinationFromCurrent(everyDestinations, fromX, fromY);
     }
 
     GenerateMaze() {

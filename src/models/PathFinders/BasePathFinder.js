@@ -1,9 +1,25 @@
 class BasePathFinder {
+    constructor(nodes, currentNode, stack, gridSize) {
+        this.gridSize = gridSize;
+        this.nodes = nodes;
+        this.currentNode = currentNode;
+        this.stack = stack;
+    }
+
+    /**
+     * @everyDestinations Array of path object {x,y}
+     * Find the shortest destination among everyDestinations from (X,Y)
+     * @return Array of path object which direct from(x,y) to the destination
+     */
+    GetDestinationFromCurrent(everyDestinations, fromX, fromY) {
+        throw new Error("Derived class must implement GetDestinationFromCurrent method");
+    }
+
     GetCellIndex(i, j, grid) {
         return i * grid + j;
     }
 
-    GetAllNeigbors(cell, nodes, gridX) {
+    GetAllNeigbors(cell = this.currentNode, nodes = this.nodes, gridX = this.gridSize) {
         const unvisitedNeigbors = [];
         const { i, j } = cell;
         const top = i - 1 >= 0 && nodes[this.GetCellIndex(i - 1, j, gridX)];
@@ -36,7 +52,7 @@ class BasePathFinder {
         return n;
     }
 
-    GetIndexOfMovablePath(i, j, walls) {
+    GetIndexOfMovablePath(i = this.currentNode.i, j = this.currentNode.j, walls = this.currentNode.walls) {
         return walls.reduce((acc, next, index) => {
             if (next === false) {
                 let nextI = i;
