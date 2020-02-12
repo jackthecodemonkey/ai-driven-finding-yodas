@@ -2,12 +2,9 @@ import React from 'react';
 import '../../App.css';
 import { EventTypes } from '../../common';
 import Vader from '../../vader.jfif';
+import Mando from '../../mando.png';
 import ReactTooltip from 'react-tooltip'
 
-/**
- * Component of Robot ( Vader )
- * Listen events from Board and RobotController and do actions: move and display tooltips
- */
 class Robot extends React.Component {
     constructor(props) {
         super(props);
@@ -65,7 +62,10 @@ class Robot extends React.Component {
         return (
             <div ref={this.robotRef} style={style} className="robot">
                 <p ref={ref => this.foundTreasure = ref} data-tip='yay!'></p>
-                <img style={{ width: '50%', height: '50%' }} src={Vader} />
+                <img style={{
+                    width: '70%',
+                    height: '70%',
+                }} src={Mando} />
                 <div className="tooltip">
                     <ReactTooltip place="bottom" />
                 </div>

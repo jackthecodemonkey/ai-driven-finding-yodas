@@ -17,7 +17,7 @@ const Treasure = (props) => {
     }
     return (
         <div style={style}>
-            <img style={{ width: '50%', height: '50%' }} src={Rd2d} />
+            <img style={{ width: '60%', height: '60%' }} src={Rd2d} />
         </div>
     );
 }
