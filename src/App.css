@@ -54,8 +54,6 @@
 .input-group .label {
   border: 1px solid #989898;
   padding: 10px;
-  border-bottom-left-radius: 5px;
-  border-top-left-radius: 5px;
 }
 
 .input-group .input-wrapper {
@@ -66,7 +64,6 @@
 
 .set-position {
   padding: 20px;
-  border-radius: 5px;
   outline: none;
   background: content-box;
 }
@@ -75,9 +72,81 @@
   cursor: pointer;
 }
 
+.input-group-wrapper {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 10px;
+}
+
 .input-group .input-wrapper input[type="text"] {
   outline: none;
   border: none;
+  background: none;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-around;
+}
+
+.set-position,
+.start-btn {
+  width: 45%;
+}
+
+.set-position,
+.start-btn {
+  color: #494949 !important;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: #ffffff;
+  padding: 20px;
+  border: 1px solid #494949 !important;
+  display: inline-block;
+  transition: all 0.2s ease 0s;
+  outline: none;
+}
+
+.start-btn {
+  background: #f6b93b;
+  border-color: #f6b93b !important;
+  color: #ffffff !important;
+}
+
+.status-table {
+  background: #eee;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.status-table h4 {
+  margin-bottom: 5px !important;
+}
+
+.status-table table {
+  width: 100%;
+  display: table;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.status-table table thead tr {
+  background: #f6b93b;
+  color: #ffffff;
+}
+
+.status-table table thead tr td {
+  padding: 10px;
+  text-align: center;
+}
+
+.status-table table tbody tr {
+  border-bottom: 2px solid #f6b93b;
+}
+
+.status-table table tbody tr td {
+  padding: 10px;
+  text-align: center;
 }
 
 .tooltip .__react_component_tooltip.place-bottom {
@@ -93,6 +162,7 @@
 }
 
 .robot-controller {
+  width: 100%;
   display: flex;
   margin: 0 auto;
 }
@@ -100,8 +170,13 @@
 .robot-controller .wrapper {
   width: 100%;
   display: flex;
-  padding: 10px;
+  flex-direction: column;
   font-size: 14px;
+  justify-content: flex-end;
+}
+
+.robot-controller .wrapper h4 {
+  font-weight: 100;
 }
 
 .robot-controller .wrapper .status {
@@ -113,10 +188,26 @@
 
 .robot-controller .wrapper .setRobot {
   display: flex;
-  width: 50%;
   flex-direction: column;
-  justify-content: flex-end;
-  margin-bottom: 10px;
+  height: 33%;
+  margin-bottom: 90px;
+  margin-left: 10px;
+  justify-content: space-between;
+}
+
+.setRobot {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  max-width: 500px;
+}
+
+.setRobot h4 {
+  margin: 0;
+}
+
+.control-panel {
+  background: #eee;
+  padding: 10px;
 }
 
 .block {
