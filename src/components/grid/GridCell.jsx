@@ -6,7 +6,7 @@ import '../../App.css';
  */
 class GridCell extends React.Component {
     render() {
-        const defaultBorder = '1px solid lightgrey';
+        const defaultBorder = '1px solid white';
         const transparent = '1px solid transparent';
         const defaultStyle = {
             borderRight: defaultBorder,

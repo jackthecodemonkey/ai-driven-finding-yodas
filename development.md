@@ -9,6 +9,7 @@
   4. update background image and general ui update
   5. Is it possible to stop by clicking a button?
   6. If robot goes to straight, make animation smooth
+  7. Is it possible to make the grid responsive?
 
 * TODO Next:: Add a new map which is like a pacman 
   1. find out what algorithm needs to be used for generating the map

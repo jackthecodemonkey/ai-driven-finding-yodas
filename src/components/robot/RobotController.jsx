@@ -63,8 +63,8 @@ class RobotController extends React.Component {
 
     MoveToTreasure() {
         const shortestDest = this.grid.GetDestinationFromCurrent(this.tresure.tresurePositions, this.robotMover.x, this.robotMover.y);
-        if(shortestDest && shortestDest.length) shortestDest.shift();
-        const nextTreasure = shortestDest && shortestDest.length && shortestDest[shortestDest.length-1];
+        if (shortestDest && shortestDest.length) shortestDest.shift();
+        const nextTreasure = shortestDest && shortestDest.length && shortestDest[shortestDest.length - 1];
         if (nextTreasure) {
             shortestDest.forEach((path) => {
                 this.taskQueue.AddTask(this.MoveRobot)(path.y, path.x, nextTreasure.x, nextTreasure.y, () => {
@@ -113,16 +113,44 @@ class RobotController extends React.Component {
             <div className="robot-controller">
                 <div className="wrapper">
                     <div className="setRobot">
-                        <div className="input-group">
-                            <div className="label">X</div>
-                            <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateXposition(e.target.value)} value={this.state.x} /></div>
+                        <div className="main-status-wrapper">
+                            <div className="status-table">
+                                <h4>Results</h4>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <td>Total Movement</td>
+                                            <td>Total branch expanded</td>
+                                            <td>Remaning R2D2</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>2</td>
+                                            <td>3</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="control-panel">
+                                <h4>Current Poision of the Mando</h4>
+                                <div className="input-group-wrapper">
+                                    <div className="input-group">
+                                        <div className="label">X</div>
+                                        <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateXposition(e.target.value)} value={this.state.x} /></div>
+                                    </div>
+                                    <div className="input-group">
+                                        <div className="label">Y</div>
+                                        <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateYposition(e.target.value)} value={this.state.y} /></div>
+                                    </div>
+                                </div>
+                                <div className="button-group">
+                                    <button className="set-position clickable" onClick={this.SetPosition}>Set Position</button>
+                                    <button className="start-btn clickable" onClick={this.MoveToTreasure}>Start</button>
+                                </div>
+                            </div>
                         </div>
-                        <div className="input-group">
-                            <div className="label">Y</div>
-                            <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateYposition(e.target.value)} value={this.state.y} /></div>
-                        </div>
-                        <button className="set-position clickable" onClick={this.SetPosition}>Set Position</button>
-                        <button onClick={this.MoveToTreasure}>Temp button</button>
                     </div>
                 </div>
             </div>

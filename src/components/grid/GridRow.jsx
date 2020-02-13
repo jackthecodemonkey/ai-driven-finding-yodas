@@ -12,7 +12,6 @@ const GridRow = (props) => {
     const style = {
         display: 'flex',
         flexWrap: 'shrink',
-        margin: 'auto',
         flexDirection: 'row',
     }
 
