@@ -10,6 +10,8 @@
 ![Screenshot](/public/screenshot/13_02_2020.gif)
 
 ## Goal of the project
+* Able to switch map between the maze and pacman map
+* Able to select search algorithms
 * Able to add enemies on the map
 * Enemies automatically try to catch the mando
 * The mando avoids enemies and find all R2D2
