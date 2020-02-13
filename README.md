@@ -14,7 +14,7 @@
   It is basically the same mechanism as how depth first search works. but instead of choosing the next neighbor randomly,
   it finds out which way is the best to go among the neighbors to minimize the Darth vader's total moves
 
-![Screenshot](/public/screenshot/04_02_2020.gif)
+![Screenshot](/public/screenshot/13_02_2020.gif)
 
 ## Goal of the project
 * Able to add enemies on the map
