@@ -2,6 +2,32 @@ import React from 'react';
 import '../../App.css';
 import { RobotMover, Direction } from '../../models';
 import { EventTypes, TaskQueue } from '../../common';
+import { StatTable } from '../StatTable';
+
+class StatMonitor {
+    constructor() {
+        this.totalRobotMoves = 0;
+        this.remainingTreasures = null;
+    }
+
+    IncrementRobotMove() {
+        this.totalRobotMoves++;
+    }
+
+    DecrementTreasure() {
+        if (this.remainingTreasures && this.remainingTreasures > 0) this.remainingTreasures--;
+    }
+
+    SetInitialTreasures(numOftreasures) {
+        this.initialNumberOfTreasures = numOftreasures;
+        this.remainingTreasures = numOftreasures;
+    }
+
+    ClearStats() {
+        this.totalRobotMoves = 0;
+        this.remainingTreasures = this.initialNumberOfTreasures || null;
+    }
+}
 
 class RobotController extends React.Component {
     constructor(props) {
@@ -12,8 +38,10 @@ class RobotController extends React.Component {
         this.MoveToTreasure = this.MoveToTreasure.bind(this);
         this.HandleKeyDown = this.HandleKeyDown.bind(this);
         this.MoveRobot = this.MoveRobot.bind(this);
+        this.ResetStatsAndSetPosition = this.ResetStatsAndSetPosition.bind(this);
         this.robotMover = new RobotMover(null, null);
         this.taskQueue = new TaskQueue();
+        this.statMonitor = new StatMonitor();
         this.tresure = null;
         this.grid = null;
         this.state = {
@@ -56,7 +84,8 @@ class RobotController extends React.Component {
             x: robotJ,
             y: robotI,
         }, () => {
-            this.props.event.emit(EventTypes.MoveRobot, this.robotMover, done);
+            this.statMonitor.IncrementRobotMove();
+            this.props.event.emit(EventTypes.MoveRobot, this.robotMover, this.statMonitor, done);
             this.findAndUpdateTreasures(destJ, destI, callback);
         })
     }
@@ -74,10 +103,16 @@ class RobotController extends React.Component {
         }
     }
 
+    ResetStatsAndSetPosition() {
+        this.statMonitor.ClearStats();
+        this.SetPosition();
+    }
+
     findAndUpdateTreasures(destJ, destI, callback) {
         const found = this.tresure.HasTreasureFound(this.robotMover.x, this.robotMover.y);
         if (found.length) {
-            this.props.event.emit(EventTypes.FoundTreasure, found[0]);
+            this.statMonitor.DecrementTreasure();
+            this.props.event.emit(EventTypes.FoundTreasure, found[0], this.statMonitor);
             this.tresure.FilterPositionsBy(({ x, y }) => !(found[0].x === x && found[0].y === y));
             if (this.robotMover.x === destJ && this.robotMover.y === destI) callback && callback();
         }
@@ -105,7 +140,10 @@ class RobotController extends React.Component {
         this.props.event
             .emit(EventTypes.RobotControllerInitialized)
             .on(EventTypes.BoardGrid, grid => { this.grid = grid; })
-            .on(EventTypes.TreasureInitialized, treasure => { this.tresure = treasure });
+            .on(EventTypes.TreasureInitialized, treasure => {
+                this.tresure = treasure;
+                this.statMonitor.SetInitialTreasures(this.tresure.tresurePositions.length);
+            });
     }
 
     render() {
@@ -114,25 +152,7 @@ class RobotController extends React.Component {
                 <div className="wrapper">
                     <div className="setRobot">
                         <div className="main-status-wrapper">
-                            <div className="status-table">
-                                <h4>Results</h4>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <td>Total Movement</td>
-                                            <td>Total branch expanded</td>
-                                            <td>Remaning R2D2</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>2</td>
-                                            <td>3</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <StatTable event={this.props.event} />
                             <div className="control-panel">
                                 <h4>Current Poision of the Mando</h4>
                                 <div className="input-group-wrapper">
@@ -146,7 +166,7 @@ class RobotController extends React.Component {
                                     </div>
                                 </div>
                                 <div className="button-group">
-                                    <button className="set-position clickable" onClick={this.SetPosition}>Set Position</button>
+                                    <button className="set-position clickable" onClick={this.ResetStatsAndSetPosition}>Set Position</button>
                                     <button className="start-btn clickable" onClick={this.MoveToTreasure}>Start</button>
                                 </div>
                             </div>

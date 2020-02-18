@@ -27,7 +27,7 @@ class DFS extends BasePathFinder {
                 this.GetIndexOfMovablePath()
             );
 
-            if (filteredNeighbors.length) this.GetPath(filteredNeighbors)
+            if (filteredNeighbors.length) this.VisitOneOfNeighbors(filteredNeighbors);
 
             if (this.isOneOfDestinations(everyDestinations)) {
                 let paths = this.RestructPath({ ...this.currentNode });
@@ -56,12 +56,13 @@ class DFS extends BasePathFinder {
         })
 
         const short = directionPaths.find(t => t[t.length - 1].y === nearestDests[0].dest.i && t[t.length - 1].x === nearestDests[0].dest.j)
+
         return short
             ? short
             : directionPaths[0];
     }
 
-    GetPath(neighbors) {
+    VisitOneOfNeighbors(neighbors) {
         this.stack.push(this.currentNode);
         const next = this.GetNeigborsOfCurrentCell(neighbors);
         const { i: nextI, j: nextJ } = next;
