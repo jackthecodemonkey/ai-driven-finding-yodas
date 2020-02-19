@@ -1,33 +1,8 @@
 import React from 'react';
 import '../../App.css';
-import { RobotMover, Direction } from '../../models';
+import { RobotMover, StatMonitor } from '../../models';
 import { EventTypes, TaskQueue } from '../../common';
 import { StatTable, ControllerPanel } from '../StatTable';
-
-class StatMonitor {
-    constructor() {
-        this.totalRobotMoves = 0;
-        this.remainingTreasures = null;
-    }
-
-    IncrementRobotMove() {
-        this.totalRobotMoves++;
-    }
-
-    DecrementTreasure() {
-        if (this.remainingTreasures && this.remainingTreasures > 0) this.remainingTreasures--;
-    }
-
-    SetInitialTreasures(numOftreasures) {
-        this.initialNumberOfTreasures = numOftreasures;
-        this.remainingTreasures = numOftreasures;
-    }
-
-    ClearStats() {
-        this.totalRobotMoves = 0;
-        this.remainingTreasures = this.initialNumberOfTreasures || null;
-    }
-}
 
 class RobotController extends React.Component {
     constructor(props) {
@@ -49,6 +24,17 @@ class RobotController extends React.Component {
             y: 0,
             direction: null,
         }
+    }
+
+    componentDidMount() {
+        window.addEventListener('keydown', this.HandleKeyDown);
+        this.props.event
+            .emit(EventTypes.RobotControllerInitialized)
+            .on(EventTypes.BoardGrid, grid => { this.grid = grid; })
+            .on(EventTypes.TreasureInitialized, treasure => {
+                this.tresure = treasure;
+                this.statMonitor.SetInitialTreasures(this.tresure.tresurePositions.length);
+            });
     }
 
     SetPosition() {
@@ -133,17 +119,6 @@ class RobotController extends React.Component {
                 this.UpdateDirection(this.robotMover.currentDirection);
             }
         }
-    }
-
-    componentDidMount() {
-        window.addEventListener('keydown', this.HandleKeyDown);
-        this.props.event
-            .emit(EventTypes.RobotControllerInitialized)
-            .on(EventTypes.BoardGrid, grid => { this.grid = grid; })
-            .on(EventTypes.TreasureInitialized, treasure => {
-                this.tresure = treasure;
-                this.statMonitor.SetInitialTreasures(this.tresure.tresurePositions.length);
-            });
     }
 
     render() {
