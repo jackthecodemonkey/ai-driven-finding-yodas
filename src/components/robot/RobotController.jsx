@@ -2,7 +2,7 @@ import React from 'react';
 import '../../App.css';
 import { RobotMover, Direction } from '../../models';
 import { EventTypes, TaskQueue } from '../../common';
-import { StatTable } from '../StatTable';
+import { StatTable, ControllerPanel } from '../StatTable';
 
 class StatMonitor {
     constructor() {
@@ -153,23 +153,12 @@ class RobotController extends React.Component {
                     <div className="setRobot">
                         <div className="main-status-wrapper">
                             <StatTable event={this.props.event} />
-                            <div className="control-panel">
-                                <h4>Current Poision of the Mando</h4>
-                                <div className="input-group-wrapper">
-                                    <div className="input-group">
-                                        <div className="label">X</div>
-                                        <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateXposition(e.target.value)} value={this.state.x} /></div>
-                                    </div>
-                                    <div className="input-group">
-                                        <div className="label">Y</div>
-                                        <div className="input-wrapper"><input type="text" onChange={(e) => this.UpdateYposition(e.target.value)} value={this.state.y} /></div>
-                                    </div>
-                                </div>
-                                <div className="button-group">
-                                    <button className="set-position clickable" onClick={this.ResetStatsAndSetPosition}>Set Position</button>
-                                    <button className="start-btn clickable" onClick={this.MoveToTreasure}>Start</button>
-                                </div>
-                            </div>
+                            <ControllerPanel
+                                UpdateXposition={this.UpdateXposition}
+                                UpdateYposition={this.UpdateYposition}
+                                ResetStatsAndSetPosition={this.ResetStatsAndSetPosition}
+                                MoveToTreasure={this.MoveToTreasure}
+                            />
                         </div>
                     </div>
                 </div>
