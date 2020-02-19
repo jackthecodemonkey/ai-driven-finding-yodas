@@ -1,6 +1,6 @@
 import React from 'react';
 import '../../App.css';
-import { RobotMover, StatMonitor } from '../../models';
+import { RobotMover } from '../../models';
 import { EventTypes, TaskQueue } from '../../common';
 import { StatTable, ControllerPanel } from '../StatTable';
 
@@ -13,10 +13,8 @@ class RobotController extends React.Component {
         this.MoveToTreasure = this.MoveToTreasure.bind(this);
         this.HandleKeyDown = this.HandleKeyDown.bind(this);
         this.MoveRobot = this.MoveRobot.bind(this);
-        this.ResetStatsAndSetPosition = this.ResetStatsAndSetPosition.bind(this);
         this.robotMover = new RobotMover(null, null);
         this.taskQueue = new TaskQueue();
-        this.statMonitor = new StatMonitor();
         this.tresure = null;
         this.grid = null;
         this.state = {
@@ -31,10 +29,7 @@ class RobotController extends React.Component {
         this.props.event
             .emit(EventTypes.RobotControllerInitialized)
             .on(EventTypes.BoardGrid, grid => { this.grid = grid; })
-            .on(EventTypes.TreasureInitialized, treasure => {
-                this.tresure = treasure;
-                this.statMonitor.SetInitialTreasures(this.tresure.tresurePositions.length);
-            });
+            .on(EventTypes.TreasureInitialized, treasure => { this.tresure = treasure });
     }
 
     SetPosition() {
@@ -46,33 +41,23 @@ class RobotController extends React.Component {
         }
     }
 
-    UpdateXposition(value) {
-        this.setState({
-            x: value
-        })
+    UpdateXposition(x) {
+        this.setState({ x })
     }
 
-    UpdateYposition(value) {
-        this.setState({
-            y: value
-        })
+    UpdateYposition(y) {
+        this.setState({ y })
     }
 
-    UpdateDirection(value) {
-        this.setState({
-            direction: value
-        })
+    UpdateDirection(direction) {
+        this.setState({ direction })
     }
 
-    MoveRobot(robotI, robotJ, destJ, destI, callback, done) {
-        this.robotMover.SetPosition(robotJ, robotI);
-        this.setState({
-            x: robotJ,
-            y: robotI,
-        }, () => {
-            this.statMonitor.IncrementRobotMove();
-            this.props.event.emit(EventTypes.MoveRobot, this.robotMover, this.statMonitor, done);
-            this.findAndUpdateTreasures(destJ, destI, callback);
+    MoveRobot(y, x, destX, destY, callback, done) {
+        this.robotMover.SetPosition(x, y);
+        this.setState({ x, y }, () => {
+            this.props.event.emit(EventTypes.MoveRobot, this.robotMover, done);
+            this.findAndUpdateTreasures(destX, destY, callback);
         })
     }
 
@@ -89,18 +74,12 @@ class RobotController extends React.Component {
         }
     }
 
-    ResetStatsAndSetPosition() {
-        this.statMonitor.ClearStats();
-        this.SetPosition();
-    }
-
-    findAndUpdateTreasures(destJ, destI, callback) {
+    findAndUpdateTreasures(destX, destY, callback) {
         const found = this.tresure.HasTreasureFound(this.robotMover.x, this.robotMover.y);
         if (found.length) {
-            this.statMonitor.DecrementTreasure();
-            this.props.event.emit(EventTypes.FoundTreasure, found[0], this.statMonitor);
+            this.props.event.emit(EventTypes.FoundTreasure, found[0]);
             this.tresure.FilterPositionsBy(({ x, y }) => !(found[0].x === x && found[0].y === y));
-            if (this.robotMover.x === destJ && this.robotMover.y === destI) callback && callback();
+            if (this.robotMover.x === destX && this.robotMover.y === destY) callback && callback();
         }
     }
 
@@ -129,9 +108,11 @@ class RobotController extends React.Component {
                         <div className="main-status-wrapper">
                             <StatTable event={this.props.event} />
                             <ControllerPanel
+                                x={this.state.x}
+                                y={this.state.y}
                                 UpdateXposition={this.UpdateXposition}
                                 UpdateYposition={this.UpdateYposition}
-                                ResetStatsAndSetPosition={this.ResetStatsAndSetPosition}
+                                SetPosition={this.SetPosition}
                                 MoveToTreasure={this.MoveToTreasure}
                             />
                         </div>

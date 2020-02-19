@@ -12,19 +12,15 @@ class StatTable extends React.Component {
 
     componentDidMount() {
         this.props.event
-            .on(EventTypes.MoveRobot, (robotMover, statMonitor, done) => {
-                if (statMonitor) {
+            .on(EventTypes.MoveRobot, () => {
                     this.setState({
-                        totalMoves: statMonitor.totalRobotMoves,
+                        totalMoves: this.state.totalMoves + 1,
                     })
-                }
             })
-            .on(EventTypes.FoundTreasure, (found, statMonitor) => {
-                if (statMonitor) {
+            .on(EventTypes.FoundTreasure, () => {
                     this.setState({
-                        remainingTreasures: statMonitor.remainingTreasures,
+                        remainingTreasures: this.state.remainingTreasures - 1,
                     })
-                }
             })
             .on(EventTypes.TreasureInitialized, ({tresurePositions}) => {
                 this.setState({

@@ -20,7 +20,7 @@ class ControllerPanel extends React.Component {
                     </div>
                 </div>
                 <div className="button-group">
-                    <button className="set-position clickable" onClick={this.props.ResetStatsAndSetPosition}>Set Position</button>
+                    <button className="set-position clickable" onClick={this.props.SetPosition}>Set Position</button>
                     <button className="start-btn clickable" onClick={this.props.MoveToTreasure}>Start</button>
                 </div>
             </div>
