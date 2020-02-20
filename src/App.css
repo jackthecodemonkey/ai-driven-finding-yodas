@@ -189,8 +189,7 @@
 .robot-controller .wrapper .setRobot {
   display: flex;
   flex-direction: column;
-  height: 33%;
-  margin-bottom: 90px;
+  height: 100%;
   margin-left: 10px;
   justify-content: space-between;
 }

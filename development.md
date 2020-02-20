@@ -2,7 +2,11 @@
  Testing
 * TODO Next:: Do some Ui work.
   1. show sum of path travelled and also total number of treasures - DONE
-  2. able to reset map ( re-generate ), able to choose some grid by select box, able to enter number of treasures, able to select chars?  
+  2. 
+      1). able to reset map ( re-generate ), 
+      2). able to choose some grid by select box, 
+      3). able to enter number of treasures, 
+      4). able to select chars?  
   3. possible to show light color dots where the robot heads to
      1. maybe different color blinking for only from one point to one destination
      2. or show every dots blinking

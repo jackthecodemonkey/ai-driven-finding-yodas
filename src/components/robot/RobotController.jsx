@@ -115,6 +115,7 @@ class RobotController extends React.Component {
                                 SetPosition={this.SetPosition}
                                 MoveToTreasure={this.MoveToTreasure}
                             />
+                            { this.props.children }
                         </div>
                     </div>
                 </div>

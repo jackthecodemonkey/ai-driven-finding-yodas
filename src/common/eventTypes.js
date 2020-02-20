@@ -7,6 +7,7 @@ const EventTypes = Object.freeze({
     SetTreasure: 'SetTreasure',
     TreasureInitialized: 'TreasureInitialized',
     FoundTreasure: 'FoundTreasure',
+    RegenerateMap: 'RegenerateMap',
 });
 
 export default EventTypes;
