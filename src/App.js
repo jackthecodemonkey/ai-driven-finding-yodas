@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { Event } from './common';
-import Board from './components/Board';
+import { Board, BoardController } from './components/board';
 import { RobotController, Robot } from './components/robot';
 
 function App() {
@@ -23,9 +23,9 @@ function App() {
               />
             </Board>
           </div>
-          <RobotController
-            event={event}
-          />
+          <RobotController event={event}>
+            <BoardController event={event} />
+          </RobotController>
         </div>
       </div>
     </div>
