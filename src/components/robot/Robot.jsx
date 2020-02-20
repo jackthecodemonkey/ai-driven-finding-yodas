@@ -23,7 +23,7 @@ class Robot extends React.Component {
             .on(EventTypes.RobotDemension, (width, height) => {
                 this.setState({ width, height })
             })
-            .on(EventTypes.MoveRobot, (robotMover, statMonitor, done) => {
+            .on(EventTypes.MoveRobot, (robotMover, done) => {
                 this.MoveTo(robotMover.GetCurrentPosition(this.state.width, this.state.height), done);
                 ReactTooltip.hide()
             })
