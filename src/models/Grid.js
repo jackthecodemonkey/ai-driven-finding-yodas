@@ -4,10 +4,10 @@ import { BasePathFinder, PathAlgo } from './PathFinders';
 class Grid extends BasePathFinder {
     constructor(board = {}) {
         super();
-        this.gridWidth = board.gridWidth || 100;
-        this.gridHeight = board.gridHeight || 100;
-        this.gridX = board.gridX || 5;
-        this.gridY = board.gridY || 5;
+        this.gridWidth = board.gridWidth || 80;
+        this.gridHeight = board.gridHeight || 80;
+        this.gridX = board.gridX || 9;
+        this.gridY = board.gridY || 9;
         this.validateGrid();
 
         this.totalGridCells = this.gridX * this.gridY;

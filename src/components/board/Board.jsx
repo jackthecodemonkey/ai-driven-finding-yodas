@@ -4,18 +4,16 @@ import { Grid, TreasurePosition } from '../../models';
 import { EventTypes } from '../../common';
 import { GridRow } from '../grid';
 import Treasure from '../Treasure';
+import { MapOptions } from './MapOptions';
 
-/**
- * Component of Board
- * Display this.state.grid robot and treasures
- */
 class Board extends React.Component {
     constructor(props) {
         super(props);
         this.treasure = null;
+        this.mapOption = MapOptions.Default;
         this.state = {
             treaurePositions: [],
-            grid: new Grid(props),
+            grid: new Grid(this.mapOption),
         }
     }
 
@@ -28,7 +26,6 @@ class Board extends React.Component {
                     treaurePositions: this.treasure.GetPositionPixels(this.state.grid.gridWidth),
                 })
             })
-        this.props.event
             .on(EventTypes.RobotControllerInitialized, () => {
                 this.props.event.emit(EventTypes.BoardGrid, this.state.grid);
             })
@@ -41,7 +38,13 @@ class Board extends React.Component {
                 })
             })
             .on(EventTypes.RegenerateMap, () => {
-                this.setState({ grid: new Grid(this.props) }, () => {
+                this.setState({ grid: new Grid(this.mapOption) }, () => {
+                    this.props.event.emit(EventTypes.BoardGrid, this.state.grid);
+                })
+            })
+            .on(EventTypes.ChangeMapSize, mapSize => {
+                this.mapOption = MapOptions[mapSize];
+                this.setState({ grid: new Grid(this.mapOption) }, () => {
                     this.props.event.emit(EventTypes.BoardGrid, this.state.grid);
                 })
             })

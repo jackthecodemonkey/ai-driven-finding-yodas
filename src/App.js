@@ -11,13 +11,7 @@ function App() {
       <div className="overlay">
         <div className="container-inner">
           <div className="board-container">
-            <Board
-              event={event}
-              gridX={9}
-              gridY={9}
-              gridWidth={80}
-              gridHeight={80}
-            >
+            <Board event={event}>
               <Robot
                 event={event}
               />
