@@ -27,7 +27,7 @@ class RobotController extends React.Component {
     componentDidMount() {
         window.addEventListener('keydown', this.HandleKeyDown);
         this.props.event
-            .emit(EventTypes.RobotControllerInitialized)
+            .emit(EventTypes.RobotControllerInitialized, this.robotMover)
             .on(EventTypes.BoardGrid, grid => { this.grid = grid; })
             .on(EventTypes.TreasureInitialized, treasure => { this.tresure = treasure });
     }
@@ -36,7 +36,7 @@ class RobotController extends React.Component {
         if (!this.grid.IsInValidMove(this.state.x, this.state.y)) {
             this.robotMover.SetPosition(this.state.x * 1, this.state.y * 1);
             this.props.event
-                .emit(EventTypes.MoveRobot, this.robotMover)
+                .emit(EventTypes.MoveRobot)
                 .emit(EventTypes.SetTreasure, this.state.x * 1, this.state.y * 1);
         }
     }
@@ -56,7 +56,7 @@ class RobotController extends React.Component {
     MoveRobot(y, x, destX, destY, callback, done) {
         this.robotMover.SetPosition(x, y);
         this.setState({ x, y }, () => {
-            this.props.event.emit(EventTypes.MoveRobot, this.robotMover, done);
+            this.props.event.emit(EventTypes.MoveRobot, done);
             this.findAndUpdateTreasures(destX, destY, callback);
         })
     }
@@ -91,7 +91,7 @@ class RobotController extends React.Component {
                 this.robotMover
                     .UpdateRobotPosition(e.keyCode)
                     .UpdateDirection(e.keyCode);
-                this.props.event.emit(EventTypes.MoveRobot, this.robotMover);
+                this.props.event.emit(EventTypes.MoveRobot);
                 this.findAndUpdateTreasures();
                 this.UpdateXposition(this.robotMover.x);
                 this.UpdateYposition(this.robotMover.y);

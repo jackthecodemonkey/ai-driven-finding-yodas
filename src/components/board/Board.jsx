@@ -45,7 +45,9 @@ class Board extends React.Component {
             .on(EventTypes.ChangeMapSize, mapSize => {
                 this.mapOption = MapOptions[mapSize];
                 this.setState({ grid: new Grid(this.mapOption) }, () => {
-                    this.props.event.emit(EventTypes.BoardGrid, this.state.grid);
+                    this.props.event
+                        .emit(EventTypes.BoardGrid, this.state.grid)
+                        .emit(EventTypes.RobotDemension, this.state.grid.gridWidth, this.state.grid.gridHeight)
                 })
             })
     }
