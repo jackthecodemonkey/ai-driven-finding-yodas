@@ -47,7 +47,13 @@ class Board extends React.Component {
                 this.setState({ grid: new Grid(this.mapOption) }, () => {
                     this.props.event
                         .emit(EventTypes.BoardGrid, this.state.grid)
-                        .emit(EventTypes.RobotDemension, this.state.grid.gridWidth, this.state.grid.gridHeight)
+                        .emit(EventTypes.RobotDemension, this.state.grid.gridWidth, this.state.grid.gridHeight);
+                    this.treasure.gridX = this.state.grid.gridX;
+                    this.setState({
+                        treaurePositions: this.treasure.GetRandomPositionOfTresure(10, this.state.grid.gridWidth),
+                    }, () => {
+                        this.props.event.emit(EventTypes.TreasureInitialized, this.treasure);
+                    })
                 })
             })
     }

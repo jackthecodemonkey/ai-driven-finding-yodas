@@ -25,7 +25,7 @@ class Robot extends React.Component {
                 this.robotMover = robotMover;
             })
             .on(EventTypes.RobotDemension, (width, height) => {
-                this.setState({ width, height },()=>{
+                this.setState({ width, height }, () => {
                     this.robotMover && this.MoveTo(this.robotMover.GetCurrentPosition(this.state.width, this.state.height));
                 })
             })
