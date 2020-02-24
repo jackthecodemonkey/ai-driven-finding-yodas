@@ -28,15 +28,19 @@ class BoardController extends React.Component {
     render() {
         return (
             <div className="control-panel board-controller-container">
-                <h4>Board Setting</h4>
-                <div>
-                    <select onChange={this.OnSelect}>
-                        {
-                            GetOptions()
-                        }
-                    </select>
-                    <button onClick={this.RegenerateMap}>RegenerateMap</button>
+                <h4>Board Options</h4>
+                <div className="grid-wrapper">
+                    <h5>Grid Size</h5>
+                    <div className="custom-dropdown clickable">
+                        <select className="clickable" onChange={this.OnSelect}>
+                            {
+                                GetOptions()
+                            }
+                        </select>
+                        <button className="start-btn regenerate-btn clickable" onClick={this.RegenerateMap}>Regenerate Map</button>
+                    </div>
                 </div>
+
             </div>
         )
     }

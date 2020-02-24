@@ -11,6 +11,7 @@ class Board extends React.Component {
         super(props);
         this.treasure = null;
         this.mapOption = MapOptions.Default;
+        this.totalTreasures = props.totalTreasures || 10;
         this.state = {
             treaurePositions: [],
             grid: new Grid(this.mapOption),
@@ -31,11 +32,7 @@ class Board extends React.Component {
             })
             .on(EventTypes.SetTreasure, (x, y) => {
                 this.treasure = new TreasurePosition(x, y, this.state.grid.gridX);
-                this.setState({
-                    treaurePositions: this.treasure.GetRandomPositionOfTresure(10, this.state.grid.gridWidth),
-                }, () => {
-                    this.props.event.emit(EventTypes.TreasureInitialized, this.treasure);
-                })
+                this.UpdateTreasurePositions();
             })
             .on(EventTypes.RegenerateMap, () => {
                 this.setState({ grid: new Grid(this.mapOption) }, () => {
@@ -48,14 +45,20 @@ class Board extends React.Component {
                     this.props.event
                         .emit(EventTypes.BoardGrid, this.state.grid)
                         .emit(EventTypes.RobotDemension, this.state.grid.gridWidth, this.state.grid.gridHeight);
-                    this.treasure.gridX = this.state.grid.gridX;
-                    this.setState({
-                        treaurePositions: this.treasure.GetRandomPositionOfTresure(10, this.state.grid.gridWidth),
-                    }, () => {
-                        this.props.event.emit(EventTypes.TreasureInitialized, this.treasure);
-                    })
+                    if (this.treasure) {
+                        this.treasure.gridX = this.state.grid.gridX;
+                        this.UpdateTreasurePositions();
+                    }
                 })
             })
+    }
+
+    UpdateTreasurePositions() {
+        this.setState({
+            treaurePositions: this.treasure.GetRandomPositionOfTresure(this.totalTreasures, this.state.grid.gridWidth),
+        }, () => {
+            this.props.event.emit(EventTypes.TreasureInitialized, this.treasure);
+        })
     }
 
     render() {
