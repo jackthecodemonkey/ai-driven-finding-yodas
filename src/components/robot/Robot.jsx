@@ -10,6 +10,7 @@ class Robot extends React.Component {
         super(props);
         this.robotRef = React.createRef();
         this.tooltipRef = React.createRef();
+        this.robotMover = null;
         this.state = {
             x: null,
             y: null,
@@ -20,11 +21,16 @@ class Robot extends React.Component {
 
     componentDidMount() {
         this.props.event
-            .on(EventTypes.RobotDemension, (width, height) => {
-                this.setState({ width, height })
+            .on(EventTypes.RobotControllerInitialized, robotMover => {
+                this.robotMover = robotMover;
             })
-            .on(EventTypes.MoveRobot, (robotMover, done) => {
-                this.MoveTo(robotMover.GetCurrentPosition(this.state.width, this.state.height), done);
+            .on(EventTypes.RobotDemension, (width, height) => {
+                this.setState({ width, height }, () => {
+                    this.robotMover && this.MoveTo(this.robotMover.GetCurrentPosition(this.state.width, this.state.height));
+                })
+            })
+            .on(EventTypes.MoveRobot, (done) => {
+                this.MoveTo(this.robotMover.GetCurrentPosition(this.state.width, this.state.height), done);
                 ReactTooltip.hide()
             })
             .on(EventTypes.FoundTreasure, () => {

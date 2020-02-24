@@ -4,7 +4,7 @@ class ControllerPanel extends React.Component {
     render() {
         return (
             <div className="control-panel">
-                <h4>Current Poision of the Mando</h4>
+                <h4>Set Poision of the Mando and R2D2s</h4>
                 <div className="input-group-wrapper">
                     <div className="input-group">
                         <div className="label">X</div>

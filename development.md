@@ -1,6 +1,9 @@
 ## 11/02/202
  Testing
 * TODO Next:: Do some Ui work.
+
+  TODO:: Fix robot and treasure sizes on changing map sizes
+
   1. show sum of path travelled and also total number of treasures - DONE
   2. 
       1). able to reset map ( re-generate ), 

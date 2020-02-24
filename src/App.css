@@ -209,6 +209,11 @@
   padding: 10px;
 }
 
+.control-panel h5 {
+  margin: 0;
+  font-weight: 300;
+}
+
 .block {
   width: 100px;
   height: 100px;
@@ -238,6 +243,46 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.board-controller-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.custom-dropdown {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  vertical-align: middle;
+  margin: 10px; /* demo only */
+}
+
+.grid-wrapper {
+  margin-top: 10px;
+}
+
+.regenerate-btn {
+  width: 100%;
+}
+
+.custom-dropdown select {
+  width: 100%;
+  background-color: #f6b93b;
+  color: #fff;
+  font-size: inherit;
+  padding: .5em;
+  padding-right: 2.5em; 
+  border: 0;
+  margin: 0;
+  border-radius: 3px;
+  text-indent: 0.01px;
+  text-overflow: '';
+  outline: none;
+  -webkit-appearance: button; /* hide default arrow in chrome OSX */
+  margin-bottom: 10px;
 }
 
 @keyframes App-logo-spin {
