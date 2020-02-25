@@ -1,7 +1,6 @@
 import React from 'react';
 import '../../App.css';
 import { EventTypes } from '../../common';
-import Vader from '../../vader.jfif';
 import Mando from '../../mando.png';
 import ReactTooltip from 'react-tooltip'
 
