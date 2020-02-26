@@ -7,7 +7,7 @@
   The same mechanism as how depth first search works. but instead of choosing the next neighbor randomly,
   it finds out which way is the best to go among the neighbors to minimize moves.
 
-![Screenshot](/public/screenshot/24_02_2020.gif)
+![Screenshot](/public/screenshot/26_02_2020.gif)
 
 ## Goal of the project
 * Able to switch map between the maze and pacman map
