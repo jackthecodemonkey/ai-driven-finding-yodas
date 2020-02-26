@@ -4,10 +4,9 @@ import { RobotMover } from '../../models';
 import { EventTypes, TaskQueue } from '../../common';
 import { StatTable, ControllerPanel } from '../StatTable';
 
+/* Refactor duplicate logic and move it to a seprate file! */
 const trimPaths = (start, arr, acc = []) => {
-
     if (!start) return acc;
-
     let { x: currentX, y: currentY } = start;
     for (let ix = 0; ix < arr.length; ix++) {
         const { x, y } = arr[ix];
@@ -40,7 +39,6 @@ const trimPaths = (start, arr, acc = []) => {
                 }
             }
             if (i > 0 && i === tempArr.length) i -= 1;
-
             if (i > -1) {
                 acc = [...acc, start];
                 return trimPaths(tempArr[i] || arr[ix], tempArr.slice(i + 1), acc);
