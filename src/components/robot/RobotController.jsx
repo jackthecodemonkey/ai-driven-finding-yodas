@@ -4,6 +4,59 @@ import { RobotMover } from '../../models';
 import { EventTypes, TaskQueue } from '../../common';
 import { StatTable, ControllerPanel } from '../StatTable';
 
+/* Refactor duplicate logic and move it to a seprate file! */
+const trimPaths = (start, arr, acc = []) => {
+    if (!start) return acc;
+    let { x: currentX, y: currentY } = start;
+    for (let ix = 0; ix < arr.length; ix++) {
+        const { x, y } = arr[ix];
+        if (x === currentX) {
+            const tempArr = arr.slice(ix + 1);
+            let i;
+            for (i = 0; i < tempArr.length; i++) {
+                if (tempArr[i].x !== currentX) {
+                    i -= 1;
+                    break;
+                }
+            }
+            if(i > 0 && i === tempArr.length) i -= 1;
+            if (i > -1) {
+                acc = [...acc, start];
+                
+                return trimPaths(tempArr[i] || arr[ix], tempArr.slice(i + 1), acc);
+            } else {
+                const tempArr = arr.slice(ix);
+                acc = [...acc, start];
+                return trimPaths(tempArr[0], tempArr.slice(ix + 1), acc)
+            }
+        } else if (y === currentY) {
+            const tempArr = arr.slice(ix + 1);
+            let i;
+            for (i = 0; i < tempArr.length; i++) {
+                if (tempArr[i].y !== currentY) {
+                    i -= 1;
+                    break;
+                }
+            }
+            if (i > 0 && i === tempArr.length) i -= 1;
+            if (i > -1) {
+                acc = [...acc, start];
+                return trimPaths(tempArr[i] || arr[ix], tempArr.slice(i + 1), acc);
+            } else {
+                const tempArr = arr.slice(ix);
+                acc = [...acc, start];
+                return trimPaths(tempArr[0], tempArr.slice(ix + 1), acc)
+            }
+        } else {
+            const tempArr = arr.slice(ix);
+            acc = [...acc, start];
+            return trimPaths(tempArr[0], tempArr.slice(ix + 1), acc)
+        }
+    }
+    if (start) acc.push(start);
+    return acc;
+}
+
 class RobotController extends React.Component {
     constructor(props) {
         super(props);
@@ -66,7 +119,9 @@ class RobotController extends React.Component {
         if (shortestDest && shortestDest.length) shortestDest.shift();
         const nextTreasure = shortestDest && shortestDest.length && shortestDest[shortestDest.length - 1];
         if (nextTreasure) {
-            shortestDest.forEach((path) => {
+            const shortOnes = trimPaths({ x: this.robotMover.x, y: this.robotMover.y }, [...shortestDest]);
+            shortOnes.shift();
+            shortOnes.forEach((path) => {
                 this.taskQueue.AddTask(this.MoveRobot)(path.y, path.x, nextTreasure.x, nextTreasure.y, () => {
                     this.MoveToTreasure()
                 });
@@ -115,7 +170,7 @@ class RobotController extends React.Component {
                                 SetPosition={this.SetPosition}
                                 MoveToTreasure={this.MoveToTreasure}
                             />
-                            { this.props.children }
+                            {this.props.children}
                         </div>
                     </div>
                 </div>
