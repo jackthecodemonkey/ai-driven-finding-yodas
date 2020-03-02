@@ -3,7 +3,7 @@ import '../../App.css';
 import { RobotMover } from '../../models';
 import { EventTypes, TaskQueue } from '../../common';
 import { StatTable, ControllerPanel } from '../StatTable';
-import MinimizeMove from '../../models/PathFinders/MinimizeMove';
+import FasterMove from '../../models/PathFinders/FasterMove';
 
 class RobotController extends React.Component {
     constructor(props) {
@@ -67,10 +67,9 @@ class RobotController extends React.Component {
         if (shortestDest && shortestDest.length) shortestDest.shift();
         const nextTreasure = shortestDest && shortestDest.length && shortestDest[shortestDest.length - 1];
         if (nextTreasure) {
-            const pathShorter = new MinimizeMove({ x: this.robotMover.x, y: this.robotMover.y }, [...shortestDest]);
-            const shortOnes = pathShorter.GetReducedPath();
-            shortOnes.shift();
-            shortOnes.forEach((path) => {
+            const fasterMoves = new FasterMove({ x: this.robotMover.x, y: this.robotMover.y }, [...shortestDest]).GetReducedPath();
+            fasterMoves.shift();
+            fasterMoves.forEach((path) => {
                 this.taskQueue.AddTask(this.MoveRobot)(path.y, path.x, nextTreasure.x, nextTreasure.y, () => {
                     this.MoveToTreasure()
                 });
