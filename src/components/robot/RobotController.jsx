@@ -67,9 +67,10 @@ class RobotController extends React.Component {
         if (shortestDest && shortestDest.length) shortestDest.shift();
         const nextTreasure = shortestDest && shortestDest.length && shortestDest[shortestDest.length - 1];
         if (nextTreasure) {
-            const fasterMoves = new FasterMove({ x: this.robotMover.x, y: this.robotMover.y }, [...shortestDest]).GetReducedPath();
-            fasterMoves.shift();
-            fasterMoves.forEach((path) => {
+            const fasterMover = new FasterMove({ x: this.robotMover.x, y: this.robotMover.y }, [...shortestDest]);
+            const shortOnes = fasterMover.GetReducedPath();
+            shortOnes.shift();
+            shortOnes.forEach((path) => {
                 this.taskQueue.AddTask(this.MoveRobot)(path.y, path.x, nextTreasure.x, nextTreasure.y, () => {
                     this.MoveToTreasure()
                 });
